@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menú Digital - Tamarindo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #d4af37;
+            --gold-light: #f1d592;
+            --dark: #131c2e;
+            --card-bg: rgba(30, 41, 59, 0.6);
+            --accent: #22c55e;
+            --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            background: radial-gradient(circle at center, #1e293b, #020617);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 10px;
+            overflow-x: hidden;
+        }
+
+        /* Contenedores Principales Adaptativos */
+        #vista-flyer, #vista-pedidos {
+            width: 100%;
+            max-width: 420px;
+            display: flex;
+            justify-content: center;
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        #vista-pedidos {
+            display: none;
+            opacity: 0;
+            transform: translateY(20px);
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            max-width: none;
+            z-index: 100;
+        }
+
+        .flyer {
+            width: 100%;
+            background: var(--card-bg);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            border-radius: 30px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .header h1 {
+            font-family: 'Playfair Display', serif;
+            color: var(--gold);
+            margin: 0;
+            font-size: clamp(1.8rem, 8vw, 2.6rem);
+            text-transform: uppercase;
+        }
+
+        #dia-selector {
+            background: var(--gold);
+            color: var(--dark);
+            border: none;
+            padding: 8px 15px;
+            border-radius: 50px;
+            font-weight: 800;
+            font-size: 0.85rem;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .section {
+            margin: 8px 0;
+            padding: 12px;
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid transparent;
+        }
+
+        .section h2 {
+            font-size: 0.6rem;
+            color: var(--gold-light);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin: 0 0 5px 0;
+        }
+
+        .items { font-size: 0.95rem; line-height: 1.4; }
+
+        .btn-order {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: var(--accent);
+            color: #052e16;
+            cursor: pointer;
+            border: none;
+            width: 100%;
+            padding: 16px;
+            border-radius: 18px;
+            font-weight: 800;
+            font-size: 1rem;
+            margin: 15px 0;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.6); }
+            70% { box-shadow: 0 0 0 12px rgba(34, 197, 94, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+        }
+
+        .price-tag {
+            background: rgba(255,255,255,0.02);
+            border-radius: 15px;
+            padding: 10px;
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .price-item b { font-size: 1.1rem; color: var(--gold-light); }
+
+        .geo-info { border-top: 1px dashed rgba(212, 175, 55, 0.3); padding-top: 15px; }
+        
+        .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
+
+        .btn-footer {
+            padding: 10px;
+            border-radius: 10px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            text-decoration: none;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .btn-wa { background: #128c7e; }
+        .btn-map { background: #4285f4; }
+
+        .iframe-container { width: 100%; height: 100%; border: none; }
+
+        .loader {
+            border: 3px solid rgba(255,255,255,0.1);
+            border-top: 3px solid var(--gold);
+            border-radius: 50%;
+            width: 25px; height: 25px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+<div id="vista-flyer">
+    <div class="flyer">
+        <div class="header">
+            <h1 id="tit-nombre">TAMARINDO</h1>
+            <div class="selector-container">
+                <select id="dia-selector" onchange="renderMenu()"></select>
+            </div>
+        </div>
+
+        <div id="data-container">
+            <div class="loader"></div>
+        </div>
+
+        <button onclick="irAPedidos()" class="btn-order">
+            🛒 <span id="txt-boton">¡PIDE TU ALMUERZO AQUÍ!</span>
+        </button>
+
+        <div class="price-tag">
+            <div class="price-item"><span>MESA</span><br><b id="p-mesa">$15.000</b></div>
+            <div class="price-item"><span>DOMICILIO</span><br><b id="p-domi">$16.000</b></div>
+        </div>
+
+        <div class="geo-info">
+            <span style="font-size: 0.8rem; opacity: 0.8;" id="txt-dir">📍 Cra 11 # 64 - 10</span>
+            <div class="contact-grid">
+                <a href="#" id="link-wa" target="_blank" class="btn-footer btn-wa">💬 WhatsApp</a>
+                <a href="#" id="link-map" target="_blank" class="btn-footer btn-map">🗺️ Mapa</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="vista-pedidos">
+    <iframe id="frame-pedidos" class="iframe-container" src=""></iframe>
+</div>
+
+<script>
+    /* ==========================================
+       CONFIGURACIÓN DE DATOS PREDEFINIDOS
+       ========================================== */
+    const CONFIG = {
+        nombreNegocio: "TAMARINDO",
+        precioMesa: "$15.000",
+        precioDomi: "$16.000",
+        whatsapp: "573105554046",
+        direccion: "📍 Cra 11 # 64 - 10 | Parque Lourdes",
+        linkGoogleMaps: "https://maps.google.com/?q=Cra+11+%23+64+-+10+Bogota",
+        urlAppPedidos: "https://tamarindo-gormet.netlify.app/",
+        csvUrl: "https://docs.google.com/spreadsheets/d/e/2PACX-1vS29H3hxA9X8VcqQqGZlT4duXOIT3xAdIhExEIut9frN0i78naYSj6gnWFkWliWwKNLT5tGNlaYh16j/pub?output=csv",
+        totalMesas: 15 // Cambia este número para aumentar o disminuir mesas
+    };
+
+    // Carga inicial de datos predefinidos en la UI
+    document.getElementById('tit-nombre').innerText = CONFIG.nombreNegocio;
+    document.getElementById('p-mesa').innerText = CONFIG.precioMesa;
+    document.getElementById('p-domi').innerText = CONFIG.precioDomi;
+    document.getElementById('txt-dir').innerText = CONFIG.direccion;
+    document.getElementById('link-wa').href = `https://wa.me/${CONFIG.whatsapp}`;
+    document.getElementById('link-map').href = CONFIG.linkGoogleMaps;
+
+    let menuFullData = [];
+
+    // Lógica de QR por mesa (detecta ?mesa=X en la URL)
+    const urlParams = new URLSearchParams(window.location.search);
+    const mesaDetectada = urlParams.get('mesa');
+
+    if(mesaDetectada) {
+        document.getElementById('txt-boton').innerText = `PEDIR A MESA ${mesaDetectada}`;
+    }
+
+    function irAPedidos() {
+        const flyer = document.getElementById('vista-flyer');
+        const pedidos = document.getElementById('vista-pedidos');
+        const frame = document.getElementById('frame-pedidos');
+
+        // Si hay mesa en la URL, se la pasamos a la App de pedidos
+        const finalUrl = mesaDetectada ? `${CONFIG.urlAppPedidos}?mesa=${mesaDetectada}` : CONFIG.urlAppPedidos;
+        
+        frame.src = finalUrl;
+        flyer.style.opacity = '0';
+        flyer.style.transform = 'scale(0.9)';
+        
+        setTimeout(() => {
+            flyer.style.display = 'none';
+            pedidos.style.display = 'block';
+            setTimeout(() => {
+                pedidos.style.opacity = '1';
+                pedidos.style.transform = 'translateY(0)';
+            }, 50);
+        }, 600);
+    }
+
+    async function init() {
+        try {
+            const response = await fetch(CONFIG.csvUrl);
+            const text = await response.text();
+            menuFullData = text.split('\n').map(row => row.split(',').map(cell => cell.trim()));
+            setupSelector();
+            renderMenu();
+        } catch (e) {
+            document.getElementById('data-container').innerHTML = "Error cargando menú...";
+        }
+    }
+
+    function setupSelector() {
+        const selector = document.getElementById('dia-selector');
+        const diasDisponibles = [...new Set(menuFullData.slice(1).map(r => r[0].toUpperCase()))].filter(Boolean);
+        selector.innerHTML = diasDisponibles.map(dia => `<option value="${dia}">${dia}</option>`).join('');
+        const diasSemana = ["DOMINGO", "LUNES", "MARTES", "MIERCOLES", "JUEVES", "VIERNES", "SABADO"];
+        const hoy = diasSemana[new Date().getDay()];
+        if (diasDisponibles.includes(hoy)) selector.value = hoy;
+    }
+
+    function renderMenu() {
+        const container = document.getElementById('data-container');
+        const diaSel = document.getElementById('dia-selector').value;
+        const fila = menuFullData.find(r => r[0].toUpperCase() === diaSel);
+        if (!fila) return;
+
+        const categorias = [
+            { t: "SOPA / ENTRADA", c: fila[4] },
+            { t: "PLATO PRINCIPAL", c: fila[1] },
+            { t: "PROTEÍNA", c: fila[2] },
+            { t: "BEBIDA", c: fila[5] || "Jugo Natural" }
+        ];
+
+        container.innerHTML = categorias.map(cat => `
+            <div class="section">
+                <h2>${cat.t}</h2>
+                <div class="items">${cat.c || '---'}</div>
+            </div>
+        `).join('');
+    }
+
+    init();
+</script>
+
+</body>
+</html>
