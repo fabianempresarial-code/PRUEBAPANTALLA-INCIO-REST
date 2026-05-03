@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menú Digital Tamarindo - Premium</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #d4af37;
+            --gold-light: #f1d592;
+            --dark: #020617;
+            --neon-green: #22c55e;
+            --glass: rgba(15, 23, 42, 0.7);
+        }
+
+        body {
+            margin: 0; padding: 0;
+            font-family: 'Poppins', sans-serif;
+            background: #000;
+            color: white;
+            height: 100vh;
+            overflow: hidden;
+            display: flex; flex-direction: column;
+        }
+
+        /* FONDO DINÁMICO KINETIC */
+        .bg-motion {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            background: radial-gradient(circle at 50% 50%, #1e293b, #020617);
+        }
+
+        header {
+            height: 12vh;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 5%;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 3px solid var(--gold);
+            z-index: 10;
+        }
+
+        .logo h1 {
+            font-family: 'Playfair Display', serif;
+            color: var(--gold);
+            font-size: 3rem; margin: 0; letter-spacing: 6px;
+            text-transform: uppercase;
+            text-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
+        }
+
+        .day-badge {
+            background: var(--gold);
+            color: var(--dark);
+            padding: 8px 35px;
+            border-radius: 5px;
+            font-weight: 800;
+            font-size: 1.6rem;
+            box-shadow: 0 0 20px var(--gold);
+        }
+
+        /* CARRUSEL HORIZONTAL INFINITO */
+        main {
+            flex: 1;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+        }
+
+        .menu-track {
+            display: flex;
+            width: max-content;
+            animation: scrollHorizontal 40s linear infinite;
+        }
+
+        @keyframes scrollHorizontal {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        /* TARJETAS ESTILO BEBIDA ANIMADA */
+        .card {
+            background: var(--glass);
+            border: 2px solid rgba(34, 197, 94, 0.4);
+            border-radius: 40px;
+            margin: 0 30px;
+            width: 500px;
+            height: 550px;
+            overflow: hidden;
+            display: flex; flex-direction: column;
+            backdrop-filter: blur(15px);
+            box-shadow: 0 0 30px rgba(34, 197, 94, 0.1);
+            animation: liquidFloat 6s ease-in-out infinite;
+        }
+
+        @keyframes liquidFloat {
+            0%, 100% { transform: translateY(0) rotate(-0.5deg); }
+            50% { transform: translateY(-20px) rotate(0.5deg); box-shadow: 0 10px 50px rgba(34, 197, 94, 0.3); }
+        }
+
+        .img-container {
+            width: 100%; height: 55%;
+            overflow: hidden;
+            border-bottom: 2px solid var(--gold);
+            position: relative;
+        }
+
+        .img-container img {
+            width: 100%; height: 100%;
+            object-fit: cover;
+            animation: slowZoom 12s linear infinite alternate;
+        }
+
+        @keyframes slowZoom {
+            from { transform: scale(1); }
+            to { transform: scale(1.2); }
+        }
+
+        .info {
+            padding: 25px;
+            text-align: center;
+            flex: 1;
+            display: flex; flex-direction: column; justify-content: center;
+        }
+
+        .info h2 {
+            color: var(--gold-light);
+            font-size: 1rem; letter-spacing: 4px;
+            text-transform: uppercase; margin: 0 0 10px 0;
+            opacity: 0.8;
+        }
+
+        .content {
+            font-size: 2.2rem;
+            font-weight: 800;
+            line-height: 1.1;
+            color: var(--neon-green);
+            text-shadow: 0 0 15px rgba(34, 197, 94, 0.6);
+            animation: glowText 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes glowText {
+            from { filter: brightness(1); }
+            to { filter: brightness(1.4); }
+        }
+
+        footer {
+            height: 10vh;
+            background: var(--gold);
+            color: var(--dark);
+            display: flex; justify-content: space-around; align-items: center;
+            font-weight: 800; font-size: 2.2rem;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-motion"></div>
+
+    <header>
+        <div class="logo"><h1>TAMARINDO</h1></div>
+        <div id="label-dia" class="day-badge">...</div>
+    </header>
+
+    <main>
+        <div class="menu-track" id="menu-track">
+            <!-- Cargando datos... -->
+        </div>
+    </main>
+
+    <footer>
+        <div>MESA: $15.000</div>
+        <div>DOMI: $16.000</div>
+        <div style="font-size: 1.2rem;">📍 Cra 11 # 64 - 10 | Parque Lourdes</div>
+    </footer>
+
+    <script>
+        const CONFIG = {
+            csvUrl: "https://docs.google.com/spreadsheets/d/e/2PACX-1vS29H3hxA9X8VcqQqGZlT4duXOIT3xAdIhExEIut9frN0i78naYSj6gnWFkWliWwKNLT5tGNlaYh16j/pub?output=csv",
+            // Imagen por defecto si no hay link en el Excel
+            defaultImg: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=600"
+        };
+
+        async function updateMenu() {
+            try {
+                const res = await fetch(`${CONFIG.csvUrl}&nocache=${Date.now()}`);
+                const text = await res.text();
+                const data = text.split('\n').map(row => row.split(',').map(c => c.trim()));
+                render(data);
+            } catch (e) { console.error("Error cargando Sheets"); }
+        }
+
+        function render(data) {
+            const dias = ["DOMINGO", "LUNES", "MARTES", "MIERCOLES", "JUEVES", "VIERNES", "SABADO"];
+            const hoy = dias[new Date().getDay()];
+            
+            // Buscamos la fila del día actual
+            let fila = data.find(r => r[0] && r[0].toUpperCase() === hoy) || data[1];
+            
+            // Buscamos la fila de links de imágenes (asumiendo que está al final o identificada)
+            let filaImagenes = data.find(r => r[0] && r[0].toLowerCase().includes("imagenes")) || [];
+
+            document.getElementById('label-dia').innerText = hoy;
+
+            const items = [
+                { t: "Principios", c: fila[1], img: filaImagenes[1] || CONFIG.defaultImg },
+                { t: "Proteínas", c: fila[2], img: filaImagenes[2] || CONFIG.defaultImg },
+                { t: "Acompañantes", c: fila[3], img: filaImagenes[3] || CONFIG.defaultImg },
+                { t: "Bebida", c: fila[5] || "Jugo del Día", img: filaImagenes[5] || CONFIG.defaultImg }
+            ];
+
+            const track = document.getElementById('menu-track');
+            const html = items.map(p => `
+                <div class="card">
+                    <div class="img-container">
+                        <img src="${p.img}" alt="${p.t}">
+                    </div>
+                    <div class="info">
+                        <h2>${p.t}</h2>
+                        <div class="content">${p.c || '---'}</div>
+                    </div>
+                </div>
+            `).join('');
+
+            // Triple repetición para asegurar que no haya saltos en el scroll horizontal
+            track.innerHTML = html + html + html;
+        }
+
+        updateMenu();
+        setInterval(updateMenu, 300000); // Refresca cada 5 minutos
+    </script>
+</body>
+</html>
