@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menú Premium Tamarindo - Frases Dinámicas</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #d4af37;
+            --gold-light: #f1d592;
+            --dark: #020617;
+            --neon-green: #22c55e;
+            --glass-opacity: rgba(15, 23, 42, 0.75); 
+        }
+
+        body {
+            margin: 0; padding: 0;
+            font-family: 'Poppins', sans-serif;
+            background: #000;
+            color: white;
+            height: 100vh;
+            overflow: hidden;
+            display: flex; flex-direction: column;
+        }
+
+        #custom-bg {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -2;
+            background-size: cover;
+            background-position: center;
+            transition: opacity 2s ease-in-out;
+            filter: brightness(0.4);
+        }
+
+        .overlay-motion {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -1;
+            background: linear-gradient(135deg, rgba(2, 6, 23, 0.8) 0%, rgba(30, 41, 59, 0.4) 100%);
+            backdrop-filter: blur(5px);
+        }
+
+        header {
+            height: 14vh;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 3%;
+            background: rgba(0,0,0,0.85);
+            border-bottom: 3px solid var(--gold);
+            z-index: 10;
+        }
+
+        .brand-zone {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex: 1;
+        }
+
+        .logo-container img {
+            max-height: 70px;
+            filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.5));
+        }
+
+        .clock-wrapper {
+            transform: scale(0.6);
+            transform-origin: left center;
+            min-width: 150px;
+        }
+
+        /* ESTILO DE LA FRASE MOVIBLE */
+        .marquee-container {
+            flex: 1;
+            overflow: hidden;
+            white-space: nowrap;
+            margin-left: 20px;
+            border-left: 1px solid rgba(212, 175, 55, 0.3);
+            padding-left: 20px;
+        }
+
+        #phrase-marquee {
+            display: inline-block;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--gold-light);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            animation: marquee 15s linear infinite;
+        }
+
+        @keyframes marquee {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+
+        .day-badge {
+            background: var(--gold);
+            color: var(--dark);
+            padding: 8px 30px;
+            border-radius: 5px;
+            font-weight: 800;
+            font-size: 1.4rem;
+            box-shadow: 0 0 20px var(--gold);
+        }
+
+        main {
+            flex: 1;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+        }
+
+        .menu-track {
+            display: flex;
+            width: max-content;
+            animation: scrollHorizontal 45s linear infinite;
+        }
+
+        @keyframes scrollHorizontal {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        .card {
+            background: var(--glass-opacity);
+            border: 2px solid rgba(34, 197, 94, 0.4);
+            border-radius: 40px;
+            margin: 0 30px;
+            width: 480px;
+            height: 520px;
+            overflow: hidden;
+            display: flex; flex-direction: column;
+            backdrop-filter: blur(15px);
+            box-shadow: 0 0 30px rgba(34, 197, 94, 0.1);
+            animation: liquidFloat 6s ease-in-out infinite;
+        }
+
+        @keyframes liquidFloat {
+            0%, 100% { transform: translateY(0) rotate(-0.5deg); }
+            50% { transform: translateY(-15px) rotate(0.5deg); }
+        }
+
+        .img-container {
+            width: 100%; height: 55%;
+            overflow: hidden;
+            border-bottom: 2px solid var(--gold);
+            position: relative;
+            background: #000;
+        }
+
+        .img-container img {
+            width: 100%; height: 100%;
+            object-fit: cover;
+            transition: opacity 2s ease-in-out;
+            animation: slowZoom 12s linear infinite alternate;
+        }
+
+        @keyframes slowZoom {
+            from { transform: scale(1); }
+            to { transform: scale(1.15); }
+        }
+
+        .info {
+            padding: 20px;
+            text-align: center;
+            flex: 1;
+            display: flex; flex-direction: column; justify-content: center;
+        }
+
+        .content {
+            font-size: 2.1rem;
+            font-weight: 800;
+            line-height: 1.1;
+            color: var(--neon-green);
+            text-shadow: 0 0 15px rgba(34, 197, 94, 0.6);
+        }
+
+        footer {
+            height: 10vh;
+            background: var(--gold);
+            color: var(--dark);
+            display: flex; justify-content: space-around; align-items: center;
+            font-weight: 800; font-size: 2rem;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="custom-bg"></div>
+    <div class="overlay-motion"></div>
+
+    <header>
+        <div class="brand-zone">
+            <div class="logo-container">
+                <img id="custom-logo" src="LINK_DE_TU_LOGO_AQUI" alt="Logo">
+            </div>
+            <div class="clock-wrapper">
+                <script src="https://cdn.logwork.com/widget/digital.js"></script>
+                <a href="https://logwork.com/current-time-in-bogota-colombia" class="digital-clock" data-style="style2" data-size="250" data-timezone="America/Bogota" data-language="en">Current time in Bogotá, Colombia</a>
+            </div>
+            <!-- CONTENEDOR DE LA FRASE -->
+            <div class="marquee-container">
+                <span id="phrase-marquee">Cargando inspiración...</span>
+            </div>
+        </div>
+        <div id="label-dia" class="day-badge">...</div>
+    </header>
+
+    <main>
+        <div id="menu-track" class="menu-track"></div>
+    </main>
+
+    <footer>
+        <div>MESA: $15.000</div>
+        <div>DOMI: $16.000</div>
+        <div style="font-size: 1.1rem;">📍 Cra 11 # 64 - 10 | Parque Lourdes</div>
+    </footer>
+
+    <script>
+        const CONFIG = {
+            csvUrl: "https://docs.google.com/spreadsheets/d/e/2PACX-1vS29H3hxA9X8VcqQqGZlT4duXOIT3xAdIhExEIut9frN0i78naYSj6gnWFkWliWwKNLT5tGNlaYh16j/pub?output=csv",
+            defaultImg: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=1000",
+            defaultBg: "https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?q=80&w=1500"
+        };
+
+        let currentData = [];
+        let imageOptions = [];
+        let phraseOptions = [];
+
+        function getRandomFromList(list, defaultVal) {
+            return list.length > 0 ? list[Math.floor(Math.random() * list.length)] : defaultVal;
+        }
+
+        async function loadData() {
+            try {
+                const res = await fetch(`${CONFIG.csvUrl}&nocache=${Date.now()}`);
+                const text = await res.text();
+                const data = text.split('\n').map(row => row.split(',').map(c => c.trim()));
+                
+                const dias = ["DOMINGO", "LUNES", "MARTES", "MIERCOLES", "JUEVES", "VIERNES", "SABADO"];
+                const hoy = dias[new Date().getDay()];
+                
+                currentData = data.find(r => r[0] && r[0].toUpperCase() === hoy) || data[1];
+                imageOptions = data.filter(r => r[0] && r[0].toLowerCase().includes("imagenes"));
+                
+                // Cargar frases aleatorias desde filas que empiecen con "FRASES"
+                const phraseRows = data.filter(r => r[0] && r[0].toUpperCase() === "FRASES");
+                phraseOptions = phraseRows.flatMap(row => row.slice(1).filter(c => c !== ""));
+
+                if (!document.getElementById('img-cat-0')) renderInitial();
+                updatePhrase();
+            } catch (e) { console.error("Error al cargar datos"); }
+        }
+
+        function updatePhrase() {
+            const marquee = document.getElementById('phrase-marquee');
+            if (phraseOptions.length > 0) {
+                marquee.innerText = getRandomFromList(phraseOptions, "Bienvenidos a Tamarindo");
+            }
+        }
+
+        function renderInitial() {
+            document.getElementById('label-dia').innerText = ["DOMINGO", "LUNES", "MARTES", "MIERCOLES", "JUEVES", "VIERNES", "SABADO"][new Date().getDay()];
+            
+            const categories = [
+                { t: "Principios", c: currentData[1], col: 1 },
+                { t: "Proteínas", c: currentData[2], col: 2 },
+                { t: "Acompañantes", c: currentData[3], col: 3 },
+                { t: "Bebida", c: currentData[5] || "Jugo Natural", col: 5 }
+            ];
+
+            const track = document.getElementById('menu-track');
+            const bgImg = imageOptions.map(f => f[0]).filter(opt => opt && opt.startsWith('http'));
+            document.getElementById('custom-bg').style.backgroundImage = `url('${getRandomFromList(bgImg, CONFIG.defaultBg)}')`;
+
+            const html = categories.map((cat, i) => `
+                <div class="card">
+                    <div class="img-container">
+                        <img id="img-cat-${i}" class="cat-img-${i}" src="${getRandomFromList(imageOptions.map(f => f[cat.col]).filter(opt => opt && opt.startsWith('http')), CONFIG.defaultImg)}" alt="${cat.t}">
+                    </div>
+                    <div class="info">
+                        <h2 style="color: var(--gold-light); font-size: 0.9rem; letter-spacing: 3px;">${cat.t}</h2>
+                        <div class="content">${cat.c || '---'}</div>
+                    </div>
+                </div>
+            `).join('');
+
+            track.innerHTML = html + html + html;
+        }
+
+        function shuffleOne() {
+            if (imageOptions.length === 0) return;
+            const target = Math.floor(Math.random() * 6); // Aumentado para incluir cambio de frase
+            
+            if (target === 0) {
+                const bg = document.getElementById('custom-bg');
+                const bgImgs = imageOptions.map(f => f[0]).filter(opt => opt && opt.startsWith('http'));
+                bg.style.opacity = 0;
+                setTimeout(() => {
+                    bg.style.backgroundImage = `url('${getRandomFromList(bgImgs, CONFIG.defaultBg)}')`;
+                    bg.style.opacity = 1;
+                }, 2000);
+            } else if (target === 5) {
+                updatePhrase(); // Cambio aleatorio de frase
+            } else {
+                const catIndex = target - 1;
+                const colIndices = [1, 2, 3, 5];
+                const imgs = document.querySelectorAll(`.cat-img-${catIndex}`);
+                const options = imageOptions.map(f => f[colIndices[catIndex]]).filter(opt => opt && opt.startsWith('http'));
+                
+                imgs.forEach(img => img.style.opacity = 0);
+                setTimeout(() => {
+                    imgs.forEach(img => {
+                        img.src = getRandomFromList(options, CONFIG.defaultImg);
+                        img.style.opacity = 1;
+                    });
+                }, 2000);
+            }
+        }
+
+        loadData();
+        setInterval(loadData, 300000);
+        setInterval(shuffleOne, 15000);
+    </script>
+</body>
+</html>
