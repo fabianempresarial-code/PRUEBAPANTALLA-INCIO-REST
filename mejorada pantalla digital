@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Menú Premium Tamarindo - Fondo Personalizado</title>
+    <title>Menú Premium Tamarindo - Logo Personalizado</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -11,7 +11,6 @@
             --gold-light: #f1d592;
             --dark: #020617;
             --neon-green: #22c55e;
-            /* Control de transparencia de las tarjetas (0.1 a 0.9) */
             --glass-opacity: rgba(15, 23, 42, 0.75); 
         }
 
@@ -34,17 +33,16 @@
             background-size: cover;
             background-position: center;
             transition: background-image 2s ease-in-out;
-            filter: brightness(0.4); /* Oscurece el fondo para dar legibilidad */
+            filter: brightness(0.4);
         }
 
-        /* CAPA DE GRADIENTE CINÉTICO (Transparencia sobre el fondo) */
         .overlay-motion {
             position: fixed;
             top: 0; left: 0;
             width: 100%; height: 100%;
             z-index: -1;
             background: linear-gradient(135deg, rgba(2, 6, 23, 0.8) 0%, rgba(30, 41, 59, 0.4) 100%);
-            backdrop-filter: blur(5px); /* Suaviza el fondo personalizado */
+            backdrop-filter: blur(5px);
         }
 
         header {
@@ -56,12 +54,18 @@
             z-index: 10;
         }
 
-        .logo h1 {
-            font-family: 'Playfair Display', serif;
-            color: var(--gold);
-            font-size: 3rem; margin: 0; letter-spacing: 6px;
-            text-transform: uppercase;
-            text-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
+        /* ESTILOS DEL LOGO */
+        .logo-container {
+            height: 80%; /* Ajusta el logo al alto del header */
+            display: flex;
+            align-items: center;
+        }
+
+        .logo-container img {
+            max-height: 100%;
+            width: auto;
+            object-fit: contain;
+            filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.5));
         }
 
         .day-badge {
@@ -74,7 +78,7 @@
             box-shadow: 0 0 20px var(--gold);
         }
 
-        /* CARRUSEL HORIZONTAL INFINITO */
+        /* CARRUSEL HORIZONTAL */
         main {
             flex: 1;
             overflow: hidden;
@@ -93,7 +97,7 @@
             100% { transform: translateX(-50%); }
         }
 
-        /* TARJETAS CON TRANSPARENCIA (GLASSMORPHISM) */
+        /* TARJETAS */
         .card {
             background: var(--glass-opacity);
             border: 2px solid rgba(34, 197, 94, 0.4);
@@ -103,7 +107,7 @@
             height: 550px;
             overflow: hidden;
             display: flex; flex-direction: column;
-            backdrop-filter: blur(15px); /* Efecto de vidrio esmerilado */
+            backdrop-filter: blur(15px);
             box-shadow: 0 0 30px rgba(34, 197, 94, 0.1);
             animation: liquidFloat 6s ease-in-out infinite;
         }
@@ -157,12 +161,14 @@
 </head>
 <body>
 
-    <!-- Fondo dinámico personalizado -->
     <div id="custom-bg"></div>
     <div class="overlay-motion"></div>
 
     <header>
-        <div class="logo"><h1>TAMARINDO</h1></div>
+        <div class="logo-container">
+            <!-- El logo se carga dinámicamente desde el Script -->
+            <img id="custom-logo" src="" alt="Logo Tamarindo">
+        </div>
         <div id="label-dia" class="day-badge">...</div>
     </header>
 
@@ -180,11 +186,18 @@
 
     <script>
         const CONFIG = {
+            // URL DE TU LOGO (PNG transparente recomendado)
+            logoUrl: "https://i.imgur.com/3FvWdgi.gif",
+            
             csvUrl: "https://docs.google.com/spreadsheets/d/e/2PACX-1vS29H3hxA9X8VcqQqGZlT4duXOIT3xAdIhExEIut9frN0i78naYSj6gnWFkWliWwKNLT5tGNlaYh16j/pub?output=csv",
             defaultImg: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=1000",
-            // Fondo predeterminado si no hay link en el Sheets
             defaultBg: "https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?q=80&w=1500"
         };
+
+        // Cargar el logo inmediatamente
+        if(CONFIG.logoUrl) {
+            document.getElementById('custom-logo').src = CONFIG.logoUrl;
+        }
 
         async function updateMenu() {
             try {
@@ -202,7 +215,6 @@
             let fila = data.find(r => r[0] && r[0].toUpperCase() === hoy) || data[1];
             let filaImagenes = data.find(r => r[0] && r[0].toLowerCase().includes("imagenes")) || [];
 
-            // Aplicar Fondo Personalizado (Fila Imágenes, Columna 0 si existe el link)
             const bgUrl = filaImagenes[0] && filaImagenes[0].startsWith('http') ? filaImagenes[0] : CONFIG.defaultBg;
             document.getElementById('custom-bg').style.backgroundImage = `url('${bgUrl}')`;
 
