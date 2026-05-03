@@ -84,7 +84,7 @@
         #phrase-marquee {
             display: inline-block;
             font-size: 1.5rem;
-            font-weight: 600;
+            font-weight: 1000;
             color: var(--gold-light);
             text-transform: uppercase;
             letter-spacing: 2px;
@@ -216,7 +216,7 @@
 
     <footer>
         <div>MESA: $15.000</div>
-        <div>DOMI: $16.000</div>
+        <div>DOMICILIO: $16.000</div>
         <div style="font-size: 1.1rem;">📍 Cra 11 # 64 - 10 | Parque Lourdes</div>
     </footer>
 
@@ -323,7 +323,7 @@
         }
 
         loadData();
-        setInterval(loadData, 300000);
+        setInterval(loadData, 30000);
         setInterval(shuffleOne, 15000);
     </script>
 </body>
