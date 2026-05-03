@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Menú Premium Tamarindo - Logo Personalizado</title>
+    <title>Menú Premium Tamarindo - Transición Individual</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -24,7 +24,6 @@
             display: flex; flex-direction: column;
         }
 
-        /* CAPA DE FONDO PERSONALIZADO */
         #custom-bg {
             position: fixed;
             top: 0; left: 0;
@@ -32,7 +31,7 @@
             z-index: -2;
             background-size: cover;
             background-position: center;
-            transition: background-image 2s ease-in-out;
+            transition: opacity 2s ease-in-out;
             filter: brightness(0.4);
         }
 
@@ -54,17 +53,8 @@
             z-index: 10;
         }
 
-        /* ESTILOS DEL LOGO */
-        .logo-container {
-            height: 80%; /* Ajusta el logo al alto del header */
-            display: flex;
-            align-items: center;
-        }
-
         .logo-container img {
-            max-height: 100%;
-            width: auto;
-            object-fit: contain;
+            max-height: 60px;
             filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.5));
         }
 
@@ -78,7 +68,6 @@
             box-shadow: 0 0 20px var(--gold);
         }
 
-        /* CARRUSEL HORIZONTAL */
         main {
             flex: 1;
             overflow: hidden;
@@ -97,7 +86,6 @@
             100% { transform: translateX(-50%); }
         }
 
-        /* TARJETAS */
         .card {
             background: var(--glass-opacity);
             border: 2px solid rgba(34, 197, 94, 0.4);
@@ -121,11 +109,14 @@
             width: 100%; height: 55%;
             overflow: hidden;
             border-bottom: 2px solid var(--gold);
+            position: relative;
+            background: #000;
         }
 
         .img-container img {
             width: 100%; height: 100%;
             object-fit: cover;
+            transition: opacity 2s ease-in-out;
             animation: slowZoom 12s linear infinite alternate;
         }
 
@@ -166,16 +157,14 @@
 
     <header>
         <div class="logo-container">
-            <!-- El logo se carga dinámicamente desde el Script -->
-            <img id="custom-logo" src="" alt="Logo Tamarindo">
+            <!-- Coloca el link de tu logo aquí -->
+            <img id="custom-logo" src="https://i.imgur.com/Sj9oMDM.gif" alt="Logo Restaurante Tamarindo">
         </div>
         <div id="label-dia" class="day-badge">...</div>
     </header>
 
     <main>
-        <div class="menu-track" id="menu-track">
-            <!-- Cargando contenido... -->
-        </div>
+        <div id="menu-track" class="menu-track"></div>
     </main>
 
     <footer>
@@ -186,56 +175,56 @@
 
     <script>
         const CONFIG = {
-            // URL DE TU LOGO (PNG transparente recomendado)
-            logoUrl: "https://i.imgur.com/3FvWdgi.gif",
-            
             csvUrl: "https://docs.google.com/spreadsheets/d/e/2PACX-1vS29H3hxA9X8VcqQqGZlT4duXOIT3xAdIhExEIut9frN0i78naYSj6gnWFkWliWwKNLT5tGNlaYh16j/pub?output=csv",
             defaultImg: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=1000",
             defaultBg: "https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?q=80&w=1500"
         };
 
-        // Cargar el logo inmediatamente
-        if(CONFIG.logoUrl) {
-            document.getElementById('custom-logo').src = CONFIG.logoUrl;
+        let currentData = [];
+        let imageOptions = [];
+
+        function getRandomImage(colIndex) {
+            const options = imageOptions.map(f => f[colIndex]).filter(opt => opt && opt.startsWith('http'));
+            return options.length > 0 ? options[Math.floor(Math.random() * options.length)] : CONFIG.defaultImg;
         }
 
-        async function updateMenu() {
+        async function loadData() {
             try {
                 const res = await fetch(`${CONFIG.csvUrl}&nocache=${Date.now()}`);
                 const text = await res.text();
                 const data = text.split('\n').map(row => row.split(',').map(c => c.trim()));
-                render(data);
-            } catch (e) { console.error("Error cargando datos"); }
+                
+                const dias = ["DOMINGO", "LUNES", "MARTES", "MIERCOLES", "JUEVES", "VIERNES", "SABADO"];
+                const hoy = dias[new Date().getDay()];
+                
+                currentData = data.find(r => r[0] && r[0].toUpperCase() === hoy) || data[1];
+                imageOptions = data.filter(r => r[0] && r[0].toLowerCase().includes("imagenes"));
+
+                if (!document.getElementById('img-cat-0')) renderInitial();
+            } catch (e) { console.error("Error al cargar datos"); }
         }
 
-        function render(data) {
-            const dias = ["DOMINGO", "LUNES", "MARTES", "MIERCOLES", "JUEVES", "VIERNES", "SABADO"];
-            const hoy = dias[new Date().getDay()];
+        function renderInitial() {
+            document.getElementById('label-dia').innerText = ["DOMINGO", "LUNES", "MARTES", "MIERCOLES", "JUEVES", "VIERNES", "SABADO"][new Date().getDay()];
             
-            let fila = data.find(r => r[0] && r[0].toUpperCase() === hoy) || data[1];
-            let filaImagenes = data.find(r => r[0] && r[0].toLowerCase().includes("imagenes")) || [];
-
-            const bgUrl = filaImagenes[0] && filaImagenes[0].startsWith('http') ? filaImagenes[0] : CONFIG.defaultBg;
-            document.getElementById('custom-bg').style.backgroundImage = `url('${bgUrl}')`;
-
-            document.getElementById('label-dia').innerText = hoy;
-
-            const items = [
-                { t: "Principios", c: fila[1], img: filaImagenes[1] || CONFIG.defaultImg },
-                { t: "Proteínas", c: fila[2], img: filaImagenes[2] || CONFIG.defaultImg },
-                { t: "Acompañantes", c: fila[3], img: filaImagenes[3] || CONFIG.defaultImg },
-                { t: "Bebida", c: fila[5] || "Jugo Natural", img: filaImagenes[5] || CONFIG.defaultImg }
+            const categories = [
+                { t: "Principios", c: currentData[1], col: 1 },
+                { t: "Proteínas", c: currentData[2], col: 2 },
+                { t: "Acompañantes", c: currentData[3], col: 3 },
+                { t: "Bebida", c: currentData[5] || "Jugo Natural", col: 5 }
             ];
 
             const track = document.getElementById('menu-track');
-            const html = items.map(p => `
+            document.getElementById('custom-bg').style.backgroundImage = `url('${getRandomImage(0)}')`;
+
+            const html = categories.map((cat, i) => `
                 <div class="card">
                     <div class="img-container">
-                        <img src="${p.img}" alt="${p.t}">
+                        <img id="img-cat-${i}" class="cat-img-${i}" src="${getRandomImage(cat.col)}" alt="${cat.t}">
                     </div>
                     <div class="info">
-                        <h2 style="color: var(--gold-light); font-size: 0.9rem; letter-spacing: 3px;">${p.t}</h2>
-                        <div class="content">${p.c || '---'}</div>
+                        <h2 style="color: var(--gold-light); font-size: 0.9rem; letter-spacing: 3px;">${cat.t}</h2>
+                        <div class="content">${cat.c || '---'}</div>
                     </div>
                 </div>
             `).join('');
@@ -243,8 +232,36 @@
             track.innerHTML = html + html + html;
         }
 
-        updateMenu();
-        setInterval(updateMenu, 300000); // 5 min
+        function shuffleOne() {
+            if (imageOptions.length === 0) return;
+            const target = Math.floor(Math.random() * 5);
+            
+            if (target === 0) {
+                const bg = document.getElementById('custom-bg');
+                bg.style.opacity = 0;
+                setTimeout(() => {
+                    bg.style.backgroundImage = `url('${getRandomImage(0)}')`;
+                    bg.style.opacity = 1;
+                }, 2000);
+            } else {
+                const catIndex = target - 1;
+                const colIndices = [1, 2, 3, 5];
+                const imgs = document.querySelectorAll(`.cat-img-${catIndex}`);
+                
+                imgs.forEach(img => img.style.opacity = 0);
+                setTimeout(() => {
+                    const newSrc = getRandomImage(colIndices[catIndex]);
+                    imgs.forEach(img => {
+                        img.src = newSrc;
+                        img.style.opacity = 1;
+                    });
+                }, 2000);
+            }
+        }
+
+        loadData();
+        setInterval(loadData, 300000);
+        setInterval(shuffleOne, 15000); // Cambia una imagen cada 15 segundos de forma aleatoria
     </script>
 </body>
 </html>
