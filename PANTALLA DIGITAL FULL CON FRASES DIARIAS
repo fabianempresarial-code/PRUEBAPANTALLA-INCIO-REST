@@ -196,7 +196,7 @@
     <header>
         <div class="brand-zone">
             <div class="logo-container">
-                <img id="custom-logo" src="LINK_DE_TU_LOGO_AQUI" alt="Logo">
+                <img id="custom-logo" src="https://i.imgur.com/Sj9oMDM.gif" alt="Logo">
             </div>
             <div class="clock-wrapper">
                 <script src="https://cdn.logwork.com/widget/digital.js"></script>
