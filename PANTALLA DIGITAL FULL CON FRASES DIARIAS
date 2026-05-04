@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Menú Premium Tamarindo - Frases Dinámicas</title>
+    <title>Menú Premium Tamarindo - Listado Dinámico</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -71,7 +71,6 @@
             min-width: 150px;
         }
 
-        /* ESTILO DE LA FRASE MOVIBLE */
         .marquee-container {
             flex: 1;
             overflow: hidden;
@@ -170,12 +169,24 @@
             display: flex; flex-direction: column; justify-content: center;
         }
 
+        /* ESTILOS DE LISTA UNIFICADOS */
         .content {
-            font-size: 2.1rem;
+            font-size: 1.8rem;
             font-weight: 800;
-            line-height: 1.1;
+            line-height: 1.2;
             color: var(--neon-green);
             text-shadow: 0 0 15px rgba(34, 197, 94, 0.6);
+        }
+
+        .menu-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .menu-list li {
+            margin-bottom: 4px;
+            text-transform: capitalize;
         }
 
         footer {
@@ -202,7 +213,6 @@
                 <script src="https://cdn.logwork.com/widget/digital.js"></script>
                 <a href="https://logwork.com/current-time-in-bogota-colombia" class="digital-clock" data-style="style2" data-size="250" data-timezone="America/Bogota" data-language="en">Current time in Bogotá, Colombia</a>
             </div>
-            <!-- CONTENEDOR DE LA FRASE -->
             <div class="marquee-container">
                 <span id="phrase-marquee">Cargando inspiración...</span>
             </div>
@@ -247,11 +257,10 @@
                 currentData = data.find(r => r[0] && r[0].toUpperCase() === hoy) || data[1];
                 imageOptions = data.filter(r => r[0] && r[0].toLowerCase().includes("imagenes"));
                 
-                // Cargar frases aleatorias desde filas que empiecen con "FRASES"
                 const phraseRows = data.filter(r => r[0] && r[0].toUpperCase() === "FRASES");
                 phraseOptions = phraseRows.flatMap(row => row.slice(1).filter(c => c !== ""));
 
-                if (!document.getElementById('img-cat-0')) renderInitial();
+                renderInitial();
                 updatePhrase();
             } catch (e) { console.error("Error al cargar datos"); }
         }
@@ -277,24 +286,32 @@
             const bgImg = imageOptions.map(f => f[0]).filter(opt => opt && opt.startsWith('http'));
             document.getElementById('custom-bg').style.backgroundImage = `url('${getRandomFromList(bgImg, CONFIG.defaultBg)}')`;
 
-            const html = categories.map((cat, i) => `
-                <div class="card">
-                    <div class="img-container">
-                        <img id="img-cat-${i}" class="cat-img-${i}" src="${getRandomFromList(imageOptions.map(f => f[cat.col]).filter(opt => opt && opt.startsWith('http')), CONFIG.defaultImg)}" alt="${cat.t}">
+            const html = categories.map((cat, i) => {
+                // Lógica para limpiar guiones y crear lista
+                const items = cat.c ? cat.c.split('-').map(item => item.trim()).filter(item => item !== "") : [];
+                const contentHtml = items.length > 0 
+                    ? `<ul class="menu-list">${items.map(item => `<li>${item}</li>`).join('')}</ul>`
+                    : '---';
+
+                return `
+                    <div class="card">
+                        <div class="img-container">
+                            <img id="img-cat-${i}" class="cat-img-${i}" src="${getRandomFromList(imageOptions.map(f => f[cat.col]).filter(opt => opt && opt.startsWith('http')), CONFIG.defaultImg)}" alt="${cat.t}">
+                        </div>
+                        <div class="info">
+                            <h2 style="color: var(--gold-light); font-size: 0.9rem; letter-spacing: 3px;">${cat.t}</h2>
+                            <div class="content">${contentHtml}</div>
+                        </div>
                     </div>
-                    <div class="info">
-                        <h2 style="color: var(--gold-light); font-size: 0.9rem; letter-spacing: 3px;">${cat.t}</h2>
-                        <div class="content">${cat.c || '---'}</div>
-                    </div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
 
             track.innerHTML = html + html + html;
         }
 
         function shuffleOne() {
             if (imageOptions.length === 0) return;
-            const target = Math.floor(Math.random() * 6); // Aumentado para incluir cambio de frase
+            const target = Math.floor(Math.random() * 6);
             
             if (target === 0) {
                 const bg = document.getElementById('custom-bg');
@@ -305,7 +322,7 @@
                     bg.style.opacity = 1;
                 }, 2000);
             } else if (target === 5) {
-                updatePhrase(); // Cambio aleatorio de frase
+                updatePhrase();
             } else {
                 const catIndex = target - 1;
                 const colIndices = [1, 2, 3, 5];
