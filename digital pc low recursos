@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menú Tamarindo - Loop Premium (Optimizado)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #d4af37;
+            --gold-light: #f1d592;
+            --dark: #020617;
+            --neon-green: #22c55e;
+            /* Eliminamos blur para mejorar rendimiento */
+            --glass-opacity: rgba(10, 15, 30, 0.9); 
+        }
+
+        body {
+            margin: 0; padding: 0;
+            font-family: 'Poppins', sans-serif;
+            background: #000;
+            color: white;
+            height: 100vh;
+            overflow: hidden;
+            display: flex; flex-direction: column;
+            /* Evita parpadeos en animaciones */
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+        }
+
+        #custom-bg {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -2; background-size: cover; background-position: center;
+            transition: opacity 1s ease-in-out; filter: brightness(0.3);
+            will-change: opacity;
+        }
+
+        .overlay-motion {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1; 
+            background: linear-gradient(135deg, rgba(2, 6, 23, 0.7) 0%, rgba(0, 0, 0, 0.5) 100%);
+        }
+
+        header {
+            height: 14vh; display: flex; justify-content: space-between; align-items: center;
+            padding: 0 3%; background: #000; border-bottom: 3px solid var(--gold); z-index: 10;
+        }
+
+        .brand-zone { display: flex; align-items: center; gap: 20px; flex: 1; }
+        .logo-container img { max-height: 60px; } /* Quitamos drop-shadow */
+
+        .marquee-container {
+            flex: 1; overflow: hidden; white-space: nowrap;
+            margin-left: 20px; border-left: 1px solid rgba(212, 175, 55, 0.3); padding-left: 20px;
+        }
+
+        #phrase-marquee {
+            display: inline-block; font-size: 1.6rem; font-weight: 800;
+            color: var(--gold-light); text-transform: uppercase;
+            /* translate3d para usar GPU */
+            animation: marquee 25s linear infinite;
+            will-change: transform;
+        }
+
+        @keyframes marquee { 
+            0% { transform: translate3d(100%, 0, 0); } 
+            100% { transform: translate3d(-100%, 0, 0); } 
+        }
+
+        .day-badge {
+            background: var(--gold); color: var(--dark); padding: 8px 25px;
+            border-radius: 5px; font-weight: 800; font-size: 1.4rem;
+        }
+
+        main { flex: 1; overflow: hidden; display: flex; align-items: center; }
+
+        .menu-track {
+            display: flex; width: max-content;
+            animation: scrollLoop 50s linear infinite;
+            will-change: transform;
+        }
+
+        @keyframes scrollLoop { 
+            0% { transform: translate3d(0, 0, 0); } 
+            100% { transform: translate3d(-50%, 0, 0); } 
+        }
+
+        .card {
+            background: var(--glass-opacity); 
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 25px; margin: 0 20px; width: 400px; height: 480px;
+            overflow: hidden; display: flex; flex-direction: column;
+            /* Suavizamos la animación de flotación */
+            animation: floating 8s ease-in-out infinite;
+        }
+
+        @keyframes floating { 
+            0%, 100% { transform: translate3d(0, 0, 0); } 
+            50% { transform: translate3d(0, -10px, 0); } 
+        }
+
+        .img-container { width: 100%; height: 45%; overflow: hidden; border-bottom: 2px solid var(--gold); background: #000; }
+        .img-container img { 
+            width: 100%; height: 100%; object-fit: cover; 
+            transition: opacity 0.8s ease;
+        }
+
+        .info { padding: 15px; text-align: center; flex: 1; display: flex; flex-direction: column; justify-content: center; }
+        .content { font-size: 1.7rem; font-weight: 800; line-height: 1.2; color: var(--neon-green); }
+        .menu-list { list-style: none; padding: 0; margin: 0; }
+        .menu-list li { margin-bottom: 4px; text-transform: capitalize; }
+
+        footer { height: 10vh; background: var(--gold); color: var(--dark); display: flex; justify-content: space-around; align-items: center; font-weight: 800; font-size: 1.8rem; z-index: 10; }
+        
+        /* Reloj escalado sin filtros */
+        .clock-wrapper { transform: scale(0.6); }
+    </style>
+</head>
+<body>
+
+    <div id="custom-bg"></div>
+    <div class="overlay-motion"></div>
+
+    <header>
+        <div class="brand-zone">
+            <div class="logo-container"><img src="https://i.imgur.com/Sj9oMDM.gif" alt="Logo"></div>
+            <div class="clock-wrapper">
+                <script src="https://cdn.logwork.com/widget/digital.js"></script>
+                <a href="https://logwork.com/current-time-in-bogota-colombia" class="digital-clock" data-style="style2" data-size="250" data-timezone="America/Bogota" data-language="en">Time</a>
+            </div>
+            <div class="marquee-container"><span id="phrase-marquee">Bienvenidos a Tamarindo...</span></div>
+        </div>
+        <div id="label-dia" class="day-badge">...</div>
+    </header>
+
+    <main><div id="menu-track" class="menu-track"></div></main>
+
+    <footer>
+        <div>MESA: $15.000</div>
+        <div>DOMICILIO: $16.000</div>
+        <div style="font-size: 1rem;">📍 Cra 11 # 64 - 10 | Parque Lourdes</div>
+    </footer>
+
+    <script>
+        const CONFIG = {
+            csvUrl: "https://docs.google.com/spreadsheets/d/e/2PACX-1vS29H3hxA9X8VcqQqGZlT4duXOIT3xAdIhExEIut9frN0i78naYSj6gnWFkWliWwKNLT5tGNlaYh16j/pub?output=csv",
+            defaultImg: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=600",
+            defaultBg: "https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?q=80&w=800"
+        };
+
+        let lastDataString = "";
+        let imageOptions = [];
+        let phraseOptions = [];
+
+        async function startApp() {
+            await updateData(); 
+            setInterval(updateData, 60000); // Aumentado a 1 minuto para menos carga
+            setInterval(shuffleVisuals, 20000); // Aumentado a 20s
+        }
+
+        async function updateData() {
+            try {
+                const res = await fetch(`${CONFIG.csvUrl}&nocache=${Date.now()}`);
+                const text = await res.text();
+                if (text === lastDataString) return;
+                lastDataString = text;
+
+                const rows = text.split('\n').map(row => row.split(',').map(c => c.trim()));
+                const dias = ["DOMINGO", "LUNES", "MARTES", "MIERCOLES", "JUEVES", "VIERNES", "SABADO"];
+                const hoy = dias[new Date().getDay()];
+                
+                const currentData = rows.find(r => r[0] && r[0].toUpperCase() === hoy) || rows[1];
+                imageOptions = rows.filter(r => r[0] && r[0].toLowerCase().includes("imagenes"));
+                phraseOptions = rows
+                    .filter(r => r[0] && r[0].toUpperCase().replace(/\s/g, '') === "FRASES")
+                    .flatMap(row => row.slice(1).filter(c => c !== ""));
+
+                updateUI(currentData);
+                updatePhrase();
+            } catch (e) { console.error("Error:", e); }
+        }
+
+        function updateUI(data) {
+            document.getElementById('label-dia').innerText = ["DOMINGO", "LUNES", "MARTES", "MIERCOLES", "JUEVES", "VIERNES", "SABADO"][new Date().getDay()];
+            
+            const cats = [
+                { title: 'Principios', content: data[1], col: 1 },
+                { title: 'Proteínas', content: data[2], col: 2 },
+                { title: 'Acompañantes', content: data[3], col: 3 },
+                { title: 'Bebida', content: data[5] || "Jugo Natural", col: 5 }
+            ];
+
+            const track = document.getElementById('menu-track');
+            if (track.innerHTML === "") {
+                const cardsHtml = cats.map((cat, i) => {
+                    const listHtml = formatList(cat.content);
+                    const initialImg = imageOptions.length > 0 ? (imageOptions[0][cat.col] || CONFIG.defaultImg) : CONFIG.defaultImg;
+                    return `
+                        <div class="card">
+                            <div class="img-container"><img class="cat-img-${i}" src="${initialImg}"></div>
+                            <div class="info">
+                                <h2 style="color: var(--gold-light); font-size: 0.9rem; letter-spacing: 3px; margin-bottom:10px;">${cat.title.toUpperCase()}</h2>
+                                <div class="content" id="data-text-${i}">${listHtml}</div>
+                            </div>
+                        </div>`;
+                }).join('');
+                track.innerHTML = cardsHtml + cardsHtml; 
+                
+                const bgImgs = imageOptions.map(f => f[0]).filter(img => img && img.startsWith('http'));
+                document.getElementById('custom-bg').style.backgroundImage = `url('${bgImgs[0] || CONFIG.defaultBg}')`;
+            } else {
+                cats.forEach((cat, i) => {
+                    const elements = document.querySelectorAll(`[id="data-text-${i}"]`);
+                    const newList = formatList(cat.content);
+                    elements.forEach(el => { if (el.innerHTML !== newList) el.innerHTML = newList; });
+                });
+            }
+        }
+
+        function formatList(rawText) {
+            if (!rawText) return '---';
+            const items = rawText.split('-').map(it => it.trim()).filter(it => it !== "");
+            return `<ul class="menu-list">${items.map(it => `<li>${it}</li>`).join('')}</ul>`;
+        }
+
+        function updatePhrase() {
+            const marquee = document.getElementById('phrase-marquee');
+            if (phraseOptions.length > 0) {
+                const nuevaFrase = phraseOptions[Math.floor(Math.random() * phraseOptions.length)];
+                if (marquee.innerText !== nuevaFrase) marquee.innerText = nuevaFrase;
+            }
+        }
+
+        function shuffleVisuals() {
+            if (imageOptions.length === 0) return;
+            const rand = Math.floor(Math.random() * 6);
+            if (rand === 0) { 
+                const bg = document.getElementById('custom-bg');
+                const bgImgs = imageOptions.map(f => f[0]).filter(img => img && img.startsWith('http'));
+                if(bgImgs.length > 0) {
+                    bg.style.opacity = 0;
+                    setTimeout(() => {
+                        bg.style.backgroundImage = `url('${bgImgs[Math.floor(Math.random() * bgImgs.length)]}')`;
+                        bg.style.opacity = 1;
+                    }, 1000);
+                }
+            } else if (rand === 5) {
+                updatePhrase();
+            } else { 
+                const idx = rand - 1;
+                const colIndices = [1, 2, 3, 5];
+                const imgs = document.querySelectorAll(`.cat-img-${idx}`);
+                const options = imageOptions.map(f => f[colIndices[idx]]).filter(img => img && img.startsWith('http'));
+                if (options.length > 0) {
+                    const nextImg = options[Math.floor(Math.random() * options.length)];
+                    imgs.forEach(img => { img.src = nextImg; });
+                }
+            }
+        }
+
+        startApp();
+    </script>
+</body>
+</html>
