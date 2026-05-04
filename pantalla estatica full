@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menú Tamarindo - Restaurante TV</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #d4af37;
+            --gold-light: #f1d592;
+            --dark: #020617;
+            --neon-green: #22c55e;
+            --card-bg: rgba(7, 10, 20, 0.9);
+        }
+
+        body {
+            margin: 0; padding: 0;
+            font-family: 'Poppins', sans-serif;
+            background: #000;
+            color: white;
+            height: 100vh;
+            display: flex; flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Fondo con transición ultra suave */
+        #custom-bg {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -2; background-size: cover; background-position: center;
+            filter: brightness(0.25);
+            transition: background-image 2s ease-in-out, opacity 2s;
+        }
+
+        header {
+            height: 12vh; display: flex; justify-content: space-between; align-items: center;
+            padding: 0 4%; background: rgba(0,0,0,0.8); border-bottom: 2px solid var(--gold);
+        }
+
+        .logo-container img { max-height: 55px; }
+
+        .marquee-container {
+            flex: 1; overflow: hidden; margin: 0 30px;
+            background: rgba(212, 175, 55, 0.1); border-radius: 50px; padding: 5px 20px;
+        }
+
+        #phrase-marquee {
+            display: inline-block; font-size: 1.4rem; font-weight: 600;
+            color: var(--gold-light); white-space: nowrap;
+            animation: marquee 20s linear infinite;
+        }
+
+        @keyframes marquee {
+            0% { transform: translate3d(100%, 0, 0); }
+            100% { transform: translate3d(-100%, 0, 0); }
+        }
+
+        /* Cuadrícula de Menú - 4 Columnas Fijas */
+        main {
+            flex: 1; padding: 2vh 2vw;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            align-items: stretch;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            display: flex; flex-direction: column;
+            overflow: hidden;
+            transition: transform 0.5s ease;
+        }
+
+        /* Animación sutil de entrada para las tarjetas */
+        .card { animation: fadeInCard 1s ease forwards; }
+        @keyframes fadeInCard { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .img-container {
+            height: 35%; width: 100%;
+            overflow: hidden; border-bottom: 2px solid var(--gold);
+        }
+
+        .img-container img {
+            width: 100%; height: 100%; object-fit: cover;
+            transition: opacity 1s ease-in-out;
+        }
+
+        .info {
+            padding: 15px; flex: 1;
+            display: flex; flex-direction: column;
+        }
+
+        .cat-title {
+            color: var(--gold-light); font-size: 0.8rem; 
+            letter-spacing: 4px; text-transform: uppercase;
+            margin-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .content-list {
+            list-style: none; padding: 0; margin: 0;
+            font-size: 1.6rem; font-weight: 800; color: var(--neon-green);
+            line-height: 1.3;
+        }
+
+        .content-list li { margin-bottom: 8px; }
+
+        footer {
+            height: 10vh; background: var(--gold); color: var(--dark);
+            display: flex; justify-content: space-around; align-items: center;
+            font-weight: 800; font-size: 1.8rem;
+        }
+
+        .price-tag { background: rgba(0,0,0,0.1); padding: 5px 15px; border-radius: 10px; }
+
+        /* Ajuste para pantallas pequeñas / antiguas */
+        @media (max-width: 1000px) {
+            .content-list { font-size: 1.2rem; }
+            footer { font-size: 1.3rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="custom-bg"></div>
+
+    <header>
+        <div class="logo-container">
+            <img src="https://i.imgur.com/Sj9oMDM.gif" alt="Logo">
+        </div>
+        <div class="marquee-container">
+            <span id="phrase-marquee">Cargando delicias del día...</span>
+        </div>
+        <div id="label-dia" style="background: var(--gold); color: var(--dark); padding: 5px 20px; border-radius: 5px; font-weight: 800;">...</div>
+    </header>
+
+    <main id="menu-grid">
+        </main>
+
+    <footer>
+        <div class="price-tag">MESA: $15.000</div>
+        <div class="price-tag">DOMICILIO: $16.000</div>
+        <div style="font-size: 0.9rem; text-align: right;">📍 Cra 11 # 64 - 10<br>Parque Lourdes</div>
+    </footer>
+
+    <script>
+        const CONFIG = {
+            csvUrl: "https://docs.google.com/spreadsheets/d/e/2PACX-1vS29H3hxA9X8VcqQqGZlT4duXOIT3xAdIhExEIut9frN0i78naYSj6gnWFkWliWwKNLT5tGNlaYh16j/pub?output=csv",
+            defaultImg: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=800",
+            updateInterval: 60000,
+            visualInterval: 12000
+        };
+
+        let imageOptions = [];
+        let phraseOptions = [];
+
+        async function init() {
+            await loadData();
+            setInterval(loadData, CONFIG.updateInterval);
+            setInterval(rotateVisuals, CONFIG.visualInterval);
+        }
+
+        async function loadData() {
+            try {
+                const res = await fetch(`${CONFIG.csvUrl}&nocache=${Date.now()}`);
+                const text = await res.text();
+                const rows = text.split('\n').map(row => row.split(',').map(c => c.trim()));
+                
+                const dias = ["DOMINGO", "LUNES", "MARTES", "MIERCOLES", "JUEVES", "VIERNES", "SABADO"];
+                const hoy = dias[new Date().getDay()];
+                const currentMenu = rows.find(r => r[0] && r[0].toUpperCase() === hoy) || rows[1];
+                
+                imageOptions = rows.filter(r => r[0] && r[0].toLowerCase().includes("imagenes"));
+                phraseOptions = rows
+                    .filter(r => r[0] && r[0].toUpperCase().includes("FRASES"))
+                    .flatMap(row => row.slice(1).filter(c => c !== ""));
+
+                renderMenu(currentMenu);
+                updatePhrase();
+            } catch (e) { console.error("Error cargando datos:", e); }
+        }
+
+        function renderMenu(data) {
+            document.getElementById('label-dia').innerText = ["DOMINGO", "LUNES", "MARTES", "MIERCOLES", "JUEVES", "VIERNES", "SABADO"][new Date().getDay()];
+            
+            const cats = [
+                { title: 'Principios', content: data[1], col: 1 },
+                { title: 'Proteínas', content: data[2], col: 2 },
+                { title: 'Acompañantes', content: data[3], col: 3 },
+                { title: 'Bebida', content: data[5] || "Jugo Natural", col: 5 }
+            ];
+
+            const grid = document.getElementById('menu-grid');
+            grid.innerHTML = cats.map((cat, i) => `
+                <div class="card">
+                    <div class="img-container">
+                        <img id="img-${i}" src="${imageOptions[0] ? imageOptions[0][cat.col] : CONFIG.defaultImg}">
+                    </div>
+                    <div class="info">
+                        <div class="cat-title">${cat.title}</div>
+                        <ul class="content-list">
+                            ${cat.content.split('-').filter(t => t.length > 2).map(item => `<li>${item}</li>`).join('')}
+                        </ul>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function rotateVisuals() {
+            if (imageOptions.length < 2) return;
+
+            // 1. Rotar fondo
+            const bg = document.getElementById('custom-bg');
+            const bgList = imageOptions.map(r => r[0]).filter(i => i.startsWith('http'));
+            bg.style.backgroundImage = `url('${bgList[Math.floor(Math.random() * bgList.length)]}')`;
+
+            // 2. Rotar una imagen de tarjeta aleatoria para dar vida
+            const cardIdx = Math.floor(Math.random() * 4);
+            const colIndices = [1, 2, 3, 5];
+            const imgElement = document.getElementById(`img-${cardIdx}`);
+            const options = imageOptions.map(r => r[colIndices[cardIdx]]).filter(i => i.startsWith('http'));
+            
+            if (imgElement && options.length > 0) {
+                imgElement.style.opacity = 0.3;
+                setTimeout(() => {
+                    imgElement.src = options[Math.floor(Math.random() * options.length)];
+                    imgElement.style.opacity = 1;
+                }, 1000);
+            }
+        }
+
+        function updatePhrase() {
+            const marquee = document.getElementById('phrase-marquee');
+            if (phraseOptions.length > 0) {
+                marquee.innerText = phraseOptions[Math.floor(Math.random() * phraseOptions.length)];
+            }
+        }
+
+        init();
+    </script>
+</body>
+</html>
