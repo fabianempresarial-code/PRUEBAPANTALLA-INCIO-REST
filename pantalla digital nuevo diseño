@@ -3,160 +3,192 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tamarindo | Exclusive Dining Experience</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,600;1,700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <title>Tamarindo Premium Menú</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --gold: #c5a059;
-            --gold-light: #e2c99d;
-            --dark-deep: #080a0f;
-            --emerald: #10b981;
-            --glass: rgba(255, 255, 255, 0.03);
-            --border-glass: rgba(255, 255, 255, 0.1);
+            --gold-gradient: linear-gradient(180deg, #f1d592 0%, #d4af37 50%, #b08d26 100%);
+            --dark-bg: #000000;
+            --card-bg: #050a1d;
+            --neon-green: #22c55e;
+            --border-gold: #c5a059;
         }
 
-        * { box-sizing: border-box; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
-            margin: 0; padding: 0;
-            font-family: 'Inter', sans-serif;
-            background: var(--dark-deep);
+            font-family: 'Poppins', sans-serif;
+            background: var(--dark-bg);
             color: white;
             height: 100vh;
             overflow: hidden;
-            display: flex; flex-direction: column;
+            display: flex;
+            flex-direction: column;
         }
 
-        /* Fondo con gradiente de profundidad */
         #custom-bg {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             z-index: -2; background-size: cover; background-position: center;
-            filter: brightness(0.3) saturate(0.8);
-            transition: background-image 2s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        #custom-bg::after {
-            content: ''; position: absolute; inset: 0;
-            background: radial-gradient(circle at center, transparent, var(--dark-deep));
+            filter: brightness(0.2);
+            transition: background-image 2s ease-in-out;
         }
 
         header {
-            height: 14vh; display: flex; justify-content: space-between; align-items: center;
-            padding: 0 5%; background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent);
-            z-index: 20;
+            height: 15vh;
+            display: grid;
+            grid-template-columns: 18% 15% 1fr;
+            gap: 15px;
+            padding: 15px;
+            background: var(--gold-gradient);
+            border-bottom: 4px solid #000;
         }
 
-        .logo-container img { 
-            max-height: 70px; 
-            filter: drop-shadow(0 0 10px rgba(197, 160, 89, 0.3));
+        .header-box {
+            background: #000;
+            border: 2px solid #fff;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
         }
 
-        #phrase-marquee { 
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 2.2rem; font-style: italic; 
-            color: var(--gold-light);
-            letter-spacing: 1px;
+        .header-box img { max-height: 80%; width: auto; }
+        .time-text { font-size: 2.2rem; font-weight: 900; color: #fff; line-height: 1; }
+        .city-text { font-size: 0.8rem; letter-spacing: 3px; font-weight: 600; }
+        
+        #phrase-marquee {
+            color: #f1d592;
+            font-size: 1.8rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            padding: 0 20px;
+            text-align: center;
+            width: 100%;
         }
 
-        main { flex: 1; position: relative; padding: 20px 4%; overflow: hidden; }
+        main { flex: 1; padding: 20px; position: relative; }
 
         #menu-grid {
-            display: grid; grid-template-columns: repeat(4, 1fr);
-            gap: 25px; height: 100%; align-items: center;
-            transition: all 1s ease;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            height: 100%;
         }
 
-        /* Tarjetas Estilo Galería */
         .card {
-            background: var(--glass);
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--border-glass);
-            border-radius: 40px 40px 15px 15px;
-            height: 95%; display: flex; flex-direction: column;
-            overflow: hidden; transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+            background: var(--card-bg);
+            border: 2px solid #222;
+            border-radius: 25px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .card.active {
+            border-color: #fff;
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.3), 0 0 15px var(--border-gold);
+            transform: scale(1.03) translateY(-5px);
+            z-index: 5;
+        }
+
+        .img-container {
+            height: 40%;
+            margin: 12px;
+            border-radius: 15px;
+            overflow: hidden;
+            border: 2px solid var(--border-gold);
             position: relative;
         }
 
-        .card.active { 
-            border-color: var(--gold); 
-            transform: translateY(-15px) scale(1.02);
-            box-shadow: 0 30px 60px rgba(0,0,0,0.6), 0 0 20px rgba(197, 160, 89, 0.1);
+        /* ANIMACIÓN ZOOM IN/OUT (KEN BURNS) */
+        @keyframes kenBurns {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.15); }
         }
 
-        .img-container { 
-            height: 60%; position: relative; overflow: hidden; 
-            mask-image: linear-gradient(to bottom, black 85%, transparent);
-        }
-        
-        .img-container img { 
-            position: absolute; inset: 0; width: 100%; height: 100%; 
+        .img-container img {
+            position: absolute; inset: 0; width: 100%; height: 100%;
             object-fit: cover; opacity: 0; 
-            transition: opacity 1.5s ease;
-            transform: scale(1.1);
+            transition: opacity 2s ease-in-out;
         }
 
-        .img-container img.active-img { opacity: 1; transform: scale(1.0); animation: slowZoom 20s infinite alternate; }
-
-        .info { padding: 25px 15px; flex: 1; display: flex; flex-direction: column; text-align: center; }
-        
-        .category-title { 
-            color: var(--gold); font-size: 0.75rem; 
-            letter-spacing: 4px; text-transform: uppercase; 
-            margin-bottom: 15px; font-weight: 600;
+        /* Solo la imagen activa tiene la animación de zoom */
+        .img-container img.active-img { 
+            opacity: 1; 
+            animation: kenBurns 10s ease-in-out infinite alternate;
         }
 
-        .content { 
-            font-size: 1.4rem; font-weight: 400; 
-            color: #efefef; line-height: 1.4;
-            font-family: 'Inter', sans-serif;
+        .category-header {
+            background: var(--gold-gradient);
+            color: #000;
+            font-weight: 900;
+            font-size: 1.2rem;
+            text-align: center;
+            padding: 6px 0;
+            margin: 0 12px;
+            border-radius: 8px;
+            text-transform: uppercase;
+            border: 1px solid #000;
         }
 
-        .content li { margin-bottom: 8px; list-style: none; }
+        .info-container {
+            flex: 1;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            text-align: center;
+        }
 
-        /* Vista de Especiales (Bento Box) */
+        .main-item {
+            color: var(--neon-green);
+            font-size: 1.3rem;
+            font-weight: 800;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            line-height: 1.1;
+        }
+
+        .sub-items {
+            color: #fff;
+            font-size: 1.2rem;
+            font-weight: 600;
+            line-height: 1.4;
+            text-transform: uppercase;
+        }
+
+        footer {
+            height: 10vh;
+            background: var(--gold-gradient);
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            align-items: center;
+            color: #000;
+            font-weight: 900;
+            font-size: 2rem;
+            padding: 0 20px;
+            border-top: 4px solid #000;
+        }
+
+        .location-footer { font-size: 1.2rem; text-align: right; }
+
         #specials-view {
-            position: absolute; inset: 0;
-            display: none; flex-direction: column;
-            background: var(--dark-deep); padding: 40px; z-index: 30;
+            position: absolute; inset: 0; display: none; flex-direction: column;
+            background: #000; padding: 30px; z-index: 100;
         }
 
-        .specials-header h2 { 
-            font-family: 'Cormorant Garamond', serif; font-size: 5rem; 
-            color: var(--gold-light); text-align: center; margin: 0 0 30px 0;
-        }
+        .specials-banner { background: var(--gold-gradient); border-radius: 20px; padding: 15px; text-align: center; margin-bottom: 20px; border: 4px solid #fff; }
+        .specials-banner h2 { font-size: 3.5rem; color: #000; font-weight: 900; margin: 0; }
 
-        #specials-bento {
-            display: grid; grid-template-columns: repeat(4, 1fr);
-            grid-template-rows: repeat(2, 1fr); gap: 20px; height: 70vh;
-        }
-
-        .bento-item {
-            border-radius: 25px; overflow: hidden; position: relative;
-            border: 1px solid var(--gold);
-            opacity: 0; transform: scale(0.9);
-        }
-
-        /* Footer Elegante */
-        footer { 
-            height: 12vh; background: #000;
-            border-top: 1px solid var(--gold);
-            display: flex; justify-content: space-around; align-items: center;
-        }
-
-        .price-tag {
-            display: flex; flex-direction: column; align-items: center;
-        }
-        .price-label { font-size: 0.7rem; color: var(--gold); letter-spacing: 2px; text-transform: uppercase; }
-        .price-value { font-size: 2.2rem; font-weight: 600; color: #fff; }
-
-        .location { font-size: 1rem; color: #888; border-left: 1px solid #333; padding-left: 30px; }
-
-        /* Animaciones */
-        @keyframes slowZoom { from { transform: scale(1); } to { transform: scale(1.15); } }
+        #specials-bento { display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(2, 1fr); gap: 15px; height: 70vh; }
+        .bento-item { border-radius: 20px; overflow: hidden; border: 4px solid var(--border-gold); opacity: 0; transform: scale(0.9); }
+        .bento-item img { width: 100%; height: 100%; object-fit: cover; }
+        .reveal-anim { animation: reveal 0.6s forwards; }
         @keyframes reveal { to { opacity: 1; transform: scale(1); } }
-        .reveal-anim { animation: reveal 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
-
-        .clock-wrapper { filter: invert(1) brightness(2); scale: 0.8; }
     </style>
 </head>
 <body>
@@ -164,56 +196,44 @@
     <div id="custom-bg"></div>
 
     <header>
-        <div class="logo-container"><img src="https://i.imgur.com/Sj9oMDM.gif" alt="Logo"></div>
-        <div id="phrase-marquee">Cocinando Experiencias...</div>
-        <div class="clock-wrapper">
-            <script src="https://cdn.logwork.com/widget/digital.js"></script>
-            <a href="https://logwork.com/current-time-in-bogota-colombia" class="digital-clock" data-style="style2" data-size="250" data-timezone="America/Bogota" data-language="es">Time</a>
+        <div class="header-box"><img src="https://i.imgur.com/Sj9oMDM.gif" alt="Logo"></div>
+        <div class="header-box">
+            <span class="time-text" id="clock">00:00</span>
+            <span class="city-text">BOGOTÁ</span>
+        </div>
+        <div class="header-box">
+            <div id="phrase-marquee">Tamarindo Premium</div>
         </div>
     </header>
 
     <main>
         <div id="menu-grid"></div>
         <div id="specials-view">
-            <div class="specials-header">
-                <h2 id="special-title-text">DE LA CASA</h2>
-            </div>
+            <div class="specials-banner"><h2 id="special-title-text">ESPECIALES DEL DÍA</h2></div>
             <div id="specials-bento"></div>
         </div>
     </main>
 
     <footer>
-        <div class="price-tag">
-            <span class="price-label">En Mesa</span>
-            <span class="price-value">$15.000</span>
-        </div>
-        <div class="price-tag">
-            <span class="price-label">Domicilio</span>
-            <span class="price-value">$16.000</span>
-        </div>
-        <div class="location">
-            📍 Cra 11 # 64 - 10 | <strong>Lourdes</strong>
-        </div>
+        <div>MESA: $15.000</div>
+        <div>DOMICILIO: $16.000</div>
+        <div class="location-footer">📍 Cra 11 # 64 - 10 | Parque Lourdes</div>
     </footer>
 
     <script>
         const CONFIG = {
             csvUrl: "https://docs.google.com/spreadsheets/d/e/2PACX-1vS29H3hxA9X8VcqQqGZlT4duXOIT3xAdIhExEIut9frN0i78naYSj6gnWFkWliWwKNLT5tGNlaYh16j/pub?output=csv",
-            defaultImg: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=800",
+            defaultImg: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=600",
             highlightInterval: 8000,
-            imageSwitchInterval: 12000,
-            cyclesToShowSpecials: 3
+            imageSwitchInterval: 10000, 
+            cyclesToPromo: 3
         };
 
-        let imageOptions = [];
-        let phraseOptions = [];
-        let activeIndex = 0;
-        let imgRotationIndex = 0;
-        let cycleCount = 0;
-        let isPromoActive = false;
-        let currentSpecialText = "";
+        let imageOptions = [], phraseOptions = [], activeIndex = 0, imgRotationIndex = 0, cycleCount = 0, isPromoActive = false;
 
         async function init() {
+            updateClock();
+            setInterval(updateClock, 1000);
             await loadData();
             setInterval(loadData, 120000);
             setInterval(rotateHighlight, CONFIG.highlightInterval);
@@ -222,74 +242,92 @@
 
         async function loadData() {
             try {
-                const res = await fetch(`${CONFIG.csvUrl}&nocache=${Date.now()}`);
+                const res = await fetch(`${CONFIG.csvUrl}&v=${Date.now()}`);
                 const text = await res.text();
                 const rows = text.split('\n').map(row => row.split(',').map(c => c.trim()));
                 const hoy = ["DOMINGO", "LUNES", "MARTES", "MIERCOLES", "JUEVES", "VIERNES", "SABADO"][new Date().getDay()];
                 const currentData = rows.find(r => r[0] && r[0].toUpperCase() === hoy) || rows[1];
                 
-                imageOptions = rows.filter(r => r[0] && r[0].toLowerCase().includes("imagenes"));
-                phraseOptions = rows.filter(r => r[0] && r[0].toUpperCase().replace(/\s/g, '') === "FRASES")
-                                    .flatMap(row => row.slice(1).filter(c => c !== ""));
-
-                currentSpecialText = currentData[6]; 
+                imageOptions = rows.filter(r => r[0]?.toLowerCase().includes("imagenes"));
+                phraseOptions = rows.filter(r => r[0]?.toUpperCase().includes("FRASES")).flatMap(row => row.slice(1).filter(c => c !== ""));
+                
                 if (!isPromoActive) renderMenu(currentData);
                 updatePhrase();
                 updateBackground();
-            } catch (e) { console.error("Error cargando datos:", e); }
+            } catch (e) { console.error(e); }
         }
 
         function renderMenu(data) {
             const categories = [
-                { title: 'Principios', content: data[1], col: 1 },
-                { title: 'Proteínas', content: data[2], col: 2 },
-                { title: 'Acompañantes', content: data[3], col: 3 },
-                { title: 'Bebida', content: data[5], col: 5 }
+                { title: 'PRINCIPIOS', content: data[1], col: 1 },
+                { title: 'PROTEÍNAS', content: data[2], col: 2 },
+                { title: 'ACOMPAÑANTES', content: data[3], col: 3 },
+                { title: 'BEBIDA', content: data[5], col: 5 }
             ];
             const grid = document.getElementById('menu-grid');
-            grid.innerHTML = categories.map((cat, i) => `
+            grid.innerHTML = categories.map((cat, i) => {
+                const items = cat.content ? cat.content.split('-').filter(t => t.trim()) : [];
+                const firstItem = items[0] || '---';
+                const restItems = items.slice(1).map(t => `• ${t}`).join('<br>');
+
+                return `
                 <div class="card" id="card-${i}" data-col="${cat.col}">
                     <div class="img-container" id="img-cont-${i}">
-                        <img src="${getImgForCategory(cat.col)}" class="active-img">
+                        <img src="${getImg(cat.col)}" class="active-img">
                     </div>
-                    <div class="info">
-                        <div class="category-title">${cat.title}</div>
-                        <div class="content">${formatList(cat.content)}</div>
+                    <div class="category-header">${cat.title}</div>
+                    <div class="info-container">
+                        <div class="main-item">${firstItem}</div>
+                        <div class="sub-items">${restItems}</div>
                     </div>
-                </div>
-            `).join('');
+                </div>`;
+            }).join('');
             highlightCard(activeIndex);
         }
 
-        function getImgForCategory(col, currentUrl = "") {
-            const valid = imageOptions.filter(r => r[col] && r[col].startsWith('http')).map(r => r[col]);
+        function getImg(col, currentUrl = "") {
+            const valid = imageOptions
+                .map(r => r[col])
+                .filter(url => url && url.startsWith('http'));
+
             if (!valid.length) return CONFIG.defaultImg;
-            let nextImg;
+            
+            let next;
             do {
-                nextImg = valid[Math.floor(Math.random() * valid.length)];
-            } while (nextImg === currentUrl && valid.length > 1);
-            return nextImg;
+                next = valid[Math.floor(Math.random() * valid.length)];
+            } while (next === currentUrl && valid.length > 1);
+            
+            return next;
         }
 
         function rotateImagesOneByOne() {
             if (isPromoActive) return;
-            const cardIdx = imgRotationIndex % 4;
-            const container = document.getElementById(`img-cont-${cardIdx}`);
-            const card = document.getElementById(`card-${cardIdx}`);
-            if (!container) return;
+            
+            const idx = imgRotationIndex % 4;
+            const container = document.getElementById(`img-cont-${idx}`);
+            const card = document.getElementById(`card-${idx}`);
+            if (!container || !card) return;
 
             const currentImg = container.querySelector('.active-img');
-            const nextImgUrl = getImgForCategory(card.dataset.col, currentImg?.src);
+            const nextUrl = getImg(parseInt(card.dataset.col), currentImg?.src);
+            
+            if (nextUrl === currentImg?.src) {
+                 imgRotationIndex++;
+                 return;
+            }
 
             const nextImg = document.createElement('img');
-            nextImg.src = nextImgUrl;
+            nextImg.src = nextUrl;
             container.appendChild(nextImg);
 
             setTimeout(() => {
-                if (currentImg) currentImg.style.opacity = '0';
                 nextImg.classList.add('active-img');
-                setTimeout(() => { if (currentImg) currentImg.remove(); }, 1600);
+                if (currentImg) {
+                    currentImg.style.opacity = '0';
+                    setTimeout(() => currentImg.remove(), 2100); 
+                }
             }, 50);
+
             imgRotationIndex++;
         }
 
@@ -299,77 +337,48 @@
             highlightCard(activeIndex);
             if (activeIndex === 0) {
                 cycleCount++;
-                if (cycleCount % CONFIG.cyclesToShowSpecials === 0) toggleSpecials(true);
+                if (cycleCount % CONFIG.cyclesToPromo === 0) toggleSpecials(true);
             }
         }
 
         function highlightCard(idx) {
-            document.querySelectorAll('.card').forEach((c, i) => {
-                c.classList.toggle('active', i === idx);
-            });
-        }
-
-        function toggleSpecials(show) {
-            const menuGrid = document.getElementById('menu-grid');
-            const specialsView = document.getElementById('specials-view');
-            const bento = document.getElementById('specials-bento');
-
-            if (show) {
-                isPromoActive = true;
-                document.getElementById('special-title-text').innerText = currentSpecialText || "ANTOJO DEL DÍA";
-                const imgs = imageOptions.map(r => r[6]).filter(l => l?.startsWith('http')).slice(0, 5);
-                bento.innerHTML = imgs.map((src, i) => `
-                    <div class="bento-item" style="grid-column: ${i===0?'span 2':'auto'}; grid-row: ${i===3?'span 2':'auto'}">
-                        <img src="${src}" style="width:100%; height:100%; object-fit:cover;">
-                    </div>`).join('');
-
-                menuGrid.style.opacity = '0';
-                menuGrid.style.transform = 'scale(0.95)';
-                
-                setTimeout(() => {
-                    menuGrid.style.display = 'none';
-                    specialsView.style.display = 'flex';
-                    setTimeout(() => {
-                        document.querySelectorAll('.bento-item').forEach((el, i) => {
-                            setTimeout(() => el.classList.add('reveal-anim'), i * 150);
-                        });
-                    }, 100);
-                }, 1000);
-                setTimeout(() => toggleSpecials(false), 12000);
-            } else {
-                specialsView.style.display = 'none';
-                menuGrid.style.display = 'grid';
-                setTimeout(() => {
-                    menuGrid.style.opacity = '1';
-                    menuGrid.style.transform = 'scale(1)';
-                    isPromoActive = false;
-                    activeIndex = 0;
-                    highlightCard(0);
-                }, 50);
-            }
-        }
-
-        function formatList(raw) {
-            if(!raw) return '...';
-            const items = raw.split('-').filter(t => t.trim());
-            return `<ul style="padding:0;margin:0;">${items.map(t => `<li>${t.trim()}</li>`).join('')}</ul>`;
+            document.querySelectorAll('.card').forEach((c, i) => c.classList.toggle('active', i === idx));
         }
 
         function updatePhrase() {
             const el = document.getElementById('phrase-marquee');
-            if (phraseOptions.length) {
-                el.style.opacity = 0;
-                setTimeout(() => {
-                    el.innerText = phraseOptions[Math.floor(Math.random() * phraseOptions.length)];
-                    el.style.opacity = 1;
-                }, 500);
-            }
+            if (phraseOptions.length) el.innerText = phraseOptions[Math.floor(Math.random() * phraseOptions.length)];
         }
 
         function updateBackground() {
-            const bgImgs = imageOptions.map(f => f[0]).filter(img => img?.startsWith('http'));
-            if (bgImgs.length) {
-                document.getElementById('custom-bg').style.backgroundImage = `url('${bgImgs[Math.floor(Math.random() * bgImgs.length)]}')`;
+            const bg = imageOptions.map(f => f[0]).filter(img => img?.startsWith('http'));
+            if (bg.length) document.getElementById('custom-bg').style.backgroundImage = `url('${bg[Math.floor(Math.random() * bg.length)]}')`;
+        }
+
+        function updateClock() {
+            const now = new Date();
+            document.getElementById('clock').innerText = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true }).replace(/\s[AP]M/, "");
+        }
+
+        function toggleSpecials(show) {
+            const grid = document.getElementById('menu-grid');
+            const spec = document.getElementById('specials-view');
+            const bento = document.getElementById('specials-bento');
+            if (show) {
+                isPromoActive = true;
+                const imgs = imageOptions.map(r => r[6]).filter(l => l?.startsWith('http')).slice(0, 5);
+                bento.innerHTML = imgs.map((src, i) => `<div class="bento-item" style="${i==0?'grid-column:span 2':''}"><img src="${src}"></div>`).join('');
+                grid.style.opacity = '0';
+                setTimeout(() => {
+                    grid.style.display = 'none';
+                    spec.style.display = 'flex';
+                    document.querySelectorAll('.bento-item').forEach((el, i) => setTimeout(() => el.classList.add('reveal-anim'), i * 150));
+                }, 600);
+                setTimeout(() => toggleSpecials(false), 12000);
+            } else {
+                spec.style.display = 'none';
+                grid.style.display = 'grid';
+                setTimeout(() => { grid.style.opacity = '1'; isPromoActive = false; highlightCard(0); }, 50);
             }
         }
 
