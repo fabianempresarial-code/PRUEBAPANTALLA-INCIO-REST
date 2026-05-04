@@ -70,20 +70,28 @@
             box-shadow: 0 10px 40px rgba(212, 175, 55, 0.4);
         }
 
-        /* IMAGEN AGRANDADA AL 65% */
+        /* Lógica de transición de imágenes */
         .img-container {
             height: 65%; 
+            position: relative;
             overflow: hidden;
             border-bottom: 3px solid var(--gold);
             background: #111;
         }
 
         .img-container img {
+            position: absolute;
+            top: 0; left: 0;
             width: 100%; height: 100%; object-fit: cover;
-            transition: transform 8s ease-in-out;
+            transition: opacity 2s ease-in-out, transform 10s linear;
+            opacity: 0;
         }
 
-        .card.active .img-container img {
+        .img-container img.active-img {
+            opacity: 1;
+        }
+
+        .card.active .img-container img.active-img {
             transform: scale(1.15);
         }
 
@@ -106,7 +114,7 @@
         }
 
         .content {
-            font-size: 1.4rem; /* Ajustado para que quepa bien */
+            font-size: 1.4rem;
             font-weight: 800;
             color: var(--neon-green);
             line-height: 1.2;
@@ -150,17 +158,20 @@
             csvUrl: "https://docs.google.com/spreadsheets/d/e/2PACX-1vS29H3hxA9X8VcqQqGZlT4duXOIT3xAdIhExEIut9frN0i78naYSj6gnWFkWliWwKNLT5tGNlaYh16j/pub?output=csv",
             defaultImg: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=600",
             defaultBg: "https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?q=80&w=1200",
-            switchInterval: 7000 
+            highlightInterval: 7000,
+            imageSwitchInterval: 20000 // 20 segundos por categoría
         };
 
         let imageOptions = [];
         let phraseOptions = [];
         let activeIndex = 0;
+        let imgRotationIndex = 0;
 
         async function init() {
             await loadData();
             setInterval(loadData, 120000); 
-            setInterval(rotateHighlight, CONFIG.switchInterval);
+            setInterval(rotateHighlight, CONFIG.highlightInterval);
+            setInterval(rotateImagesOneByOne, CONFIG.imageSwitchInterval);
         }
 
         async function loadData() {
@@ -193,12 +204,11 @@
 
             const grid = document.getElementById('menu-grid');
             grid.innerHTML = categories.map((cat, i) => {
-                // Buscamos la imagen en la fila de imágenes correspondiente a la columna del plato
-                const img = (imageOptions.length > 0 && imageOptions[0][cat.col]) ? imageOptions[0][cat.col] : CONFIG.defaultImg;
+                const img = getImgForCategory(cat.col);
                 return `
-                    <div class="card" id="card-${i}">
-                        <div class="img-container">
-                            <img src="${img}" id="img-${i}">
+                    <div class="card" id="card-${i}" data-col="${cat.col}">
+                        <div class="img-container" id="img-cont-${i}">
+                            <img src="${img}" class="active-img">
                         </div>
                         <div class="info">
                             <div class="category-title">${cat.title}</div>
@@ -207,18 +217,47 @@
                     </div>
                 `;
             }).join('');
-            
-            highlightCard(0);
+            highlightCard(activeIndex);
+        }
+
+        function getImgForCategory(col) {
+            if (imageOptions.length === 0) return CONFIG.defaultImg;
+            // Busca una imagen aleatoria en la columna correspondiente dentro de las filas de imágenes
+            const randomRow = imageOptions[Math.floor(Math.random() * imageOptions.length)];
+            return (randomRow[col] && randomRow[col].startsWith('http')) ? randomRow[col] : CONFIG.defaultImg;
+        }
+
+        // Función clave: Cambia la imagen de UNA sola categoría a la vez con fade
+        function rotateImagesOneByOne() {
+            const currentCardIndex = imgRotationIndex % 4;
+            const card = document.getElementById(`card-${currentCardIndex}`);
+            const container = document.getElementById(`img-cont-${currentCardIndex}`);
+            const col = card.getAttribute('data-col');
+            const newImgUrl = getImgForCategory(col);
+
+            // Crear el nuevo elemento de imagen (invisible al inicio)
+            const nextImg = document.createElement('img');
+            nextImg.src = newImgUrl;
+            container.appendChild(nextImg);
+
+            // Transición suave
+            setTimeout(() => {
+                const prevImg = container.querySelector('.active-img');
+                if (prevImg) prevImg.classList.remove('active-img');
+                nextImg.classList.add('active-img');
+
+                // Limpiar el DOM después de la animación
+                setTimeout(() => { if (prevImg) prevImg.remove(); }, 2100);
+            }, 50);
+
+            imgRotationIndex++;
         }
 
         function formatList(raw) {
             if (!raw) return '---';
             const items = raw.split('-').filter(t => t.trim());
-            if (items.length > 3) {
-                // Si hay muchos items, reducimos la letra un poco más
-                return `<ul class="menu-list" style="font-size: 0.9em;">${items.map(t => `<li>${t.trim()}</li>`).join('')}</ul>`;
-            }
-            return `<ul class="menu-list">${items.map(t => `<li>${t.trim()}</li>`).join('')}</ul>`;
+            const style = items.length > 3 ? 'style="font-size: 0.9em;"' : '';
+            return `<ul class="menu-list" ${style}>${items.map(t => `<li>${t.trim()}</li>`).join('')}</ul>`;
         }
 
         function rotateHighlight() {
