@@ -3,12 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tamarindo - Menú Diamond Full</title>
+    <title>Tamarindo - Menú Diamond Pro Fixed</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600;800&family=Playball&display=swap" rel="stylesheet">
     <style>
         :root {
             --gold: #d4af37;
-            --dark: #000000;
             --neon-green: #22c55e;
             --bg-blur: 15px;
         }
@@ -25,13 +24,13 @@
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             z-index: -2; background-size: cover; background-position: center;
             filter: brightness(0.25) blur(var(--bg-blur));
-            transition: background-image 2s ease-in-out;
+            transition: background-image 2.5s ease-in-out;
             transform: scale(1.1);
         }
 
         header {
             height: 12vh; display: flex; justify-content: space-between; align-items: center;
-            padding: 0 4%; background: rgba(0,0,0,0.95); border-bottom: 3px solid var(--gold);
+            padding: 0 4%; background: rgba(0,0,0,0.9); border-bottom: 3px solid var(--gold);
             z-index: 10;
         }
 
@@ -40,14 +39,14 @@
 
         main {
             flex: 1; display: flex; justify-content: center; align-items: center;
-            gap: 40px; padding: 20px;
+            gap: 45px; padding: 20px;
         }
 
-        /* --- TARJETAS EN FORMA DE ROMBO --- */
+        /* --- CONTENEDOR ROMBO --- */
         .card-container {
             position: relative; width: 280px; height: 280px;
             display: flex; justify-content: center; align-items: center;
-            transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .diamond-card {
@@ -55,57 +54,86 @@
             background: rgba(10, 10, 10, 0.95);
             transform: rotate(45deg);
             border: 2px solid #333;
-            border-radius: 15px;
+            border-radius: 20px;
             overflow: hidden;
             position: relative;
             display: flex; justify-content: center; align-items: center;
+            transition: all 0.6s ease;
         }
 
-        .card-container.active { transform: scale(1.15); z-index: 5; }
-        .card-container.active .diamond-card { border: 4px solid var(--gold); box-shadow: 0 0 50px rgba(212, 175, 55, 0.4); }
+        .card-container.active { transform: scale(1.18); z-index: 5; }
+        .card-container.active .diamond-card { 
+            border: 4px solid var(--gold); 
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.6);
+            animation: pulse-border 2s infinite ease-in-out;
+        }
+
+        @keyframes pulse-border {
+            0%, 100% { box-shadow: 0 0 20px rgba(212, 175, 55, 0.4); }
+            50% { box-shadow: 0 0 50px rgba(212, 175, 55, 0.8); }
+        }
 
         .card-inner-content {
-            transform: rotate(-45deg); /* Enderezar contenido */
+            transform: rotate(-45deg);
             text-align: center; width: 140%; height: 140%;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
         }
 
         .card-img-bg {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            object-fit: cover; opacity: 0.4; transition: opacity 0.5s;
+            object-fit: cover; opacity: 0.35; 
+            transition: transform 10s linear, opacity 0.6s ease;
         }
-        .card-container.active .card-img-bg { opacity: 0.7; transform: scale(1.1); }
+
+        .card-container.active .card-img-bg { 
+            opacity: 0.7; 
+            transform: scale(1.3) rotate(-2deg); 
+        }
 
         .badge { 
             background: var(--gold); color: #000; font-weight: 900; 
             padding: 5px 15px; border-radius: 5px; font-size: 1rem; 
-            margin-bottom: 10px; z-index: 2; text-transform: uppercase;
+            margin-bottom: 12px; z-index: 2; text-transform: uppercase;
         }
 
         .list-items { 
             color: var(--neon-green); font-size: 1.4rem; font-weight: 800; 
             line-height: 1.2; list-style: none; padding: 0; margin: 0; z-index: 2;
-            text-shadow: 2px 2px 4px #000;
+            text-shadow: 3px 3px 6px #000;
         }
 
         /* --- ESPECIALES OVERLAY --- */
         #special-overlay {
             position: absolute; top: 12vh; left: 0; width: 100%; height: 78vh;
             background: rgba(0,0,0,0.98); display: none; z-index: 100;
+            animation: slideIn 0.8s ease-out;
         }
+
+        @keyframes slideIn {
+            from { transform: translateY(100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
         .special-container { display: flex; height: 100%; align-items: center; padding: 0 5%; }
-        
-        .collage-side { flex: 1.2; display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px; }
+        .collage-side { flex: 1.2; display: grid; grid-template-columns: repeat(2, 1fr); gap: 35px; }
         .collage-diamond { 
-            width: 220px; height: 220px; transform: rotate(45deg); 
-            border: 4px solid var(--gold); overflow: hidden; border-radius: 10px;
+            width: 220px; height: 220px; transform: rotate(45deg) scale(0.8); 
+            border: 4px solid var(--gold); overflow: hidden; border-radius: 15px;
+            opacity: 0; animation: popIn 0.6s forwards;
         }
-        .collage-diamond img { width: 150%; height: 150%; object-fit: cover; transform: rotate(-45deg); }
-        
-        .text-side { flex: 1; padding-left: 50px; }
+
+        @keyframes popIn { to { opacity: 1; transform: rotate(45deg) scale(1); } }
+        .collage-diamond img { width: 160%; height: 160%; object-fit: cover; transform: rotate(-45deg); }
+        .text-side { flex: 1; padding-left: 60px; animation: fadeInRight 1s ease-out 0.4s both; }
+
+        @keyframes fadeInRight {
+            from { opacity: 0; transform: translateX(50px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
         .spec-title { font-family: 'Playball', cursive; font-size: 4.5rem; color: var(--gold); margin: 0; }
         .spec-list { list-style: none; padding: 0; font-size: 2.8rem; color: var(--neon-green); font-weight: 800; }
-        .spec-list li { margin-bottom: 20px; border-left: 12px solid var(--gold); padding-left: 20px; text-transform: uppercase; }
+        .spec-list li { margin-bottom: 20px; border-left: 12px solid var(--gold); padding-left: 20px; }
 
         footer { height: 10vh; background: var(--gold); color: #000; display: flex; justify-content: space-around; align-items: center; font-weight: 900; font-size: 2.2rem; }
     </style>
@@ -116,7 +144,7 @@
 
     <header>
         <div class="logo-container"><img src="https://i.imgur.com/Sj9oMDM.gif" alt="Logo"></div>
-        <div id="phrase-marquee">Bienvenidos a Tamarindo</div>
+        <div id="phrase-marquee">SABOR QUE ENAMORA</div>
         <div style="transform: scale(0.7);">
             <script src="https://cdn.logwork.com/widget/digital.js"></script>
             <a href="https://logwork.com/current-time-in-bogota-colombia" class="digital-clock" data-style="style2" data-size="250" data-timezone="America/Bogota" data-language="en">Time</a>
@@ -129,15 +157,22 @@
     <footer>
         <div>MESA: $15.000</div>
         <div>DOMICILIO: $16.000</div>
-        <div style="font-size: 1.3rem;">📍 Cra 11 # 64 - 10 | Parque Lourdes</div>
+        <div style="font-size: 1.3rem;">📍 PARQUE LOURDES</div>
     </footer>
 
     <script>
         const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vS29H3hxA9X8VcqQqGZlT4duXOIT3xAdIhExEIut9frN0i78naYSj6gnWFkWliWwKNLT5tGNlaYh16j/pub?output=csv";
         let activeIdx = 0;
         let sheetData = { cards: [], specials: { text: [], imgs: [] }, phrases: [] };
+        let cycleTimer;
 
-        async function load() {
+        async function init() {
+            await loadData();
+            startCycle(); // Iniciamos el ciclo después de cargar datos
+            setInterval(loadData, 180000);
+        }
+
+        async function loadData() {
             try {
                 const res = await fetch(`${SHEET_URL}&v=${Date.now()}`);
                 const csv = await res.text();
@@ -158,11 +193,11 @@
                 sheetData.specials.imgs = imgRows.map(r => r[6]).filter(url => url && url.startsWith('http'));
                 sheetData.phrases = rows.filter(r => r[0].includes("FRASES")).flatMap(r => r.slice(1).filter(c => c));
 
-                render();
+                renderMenu();
             } catch (e) { console.error(e); }
         }
 
-        function render() {
+        function renderMenu() {
             const grid = document.getElementById('menu-grid');
             grid.innerHTML = sheetData.cards.map((cat, i) => `
                 <div class="card-container" id="card-${i}">
@@ -175,23 +210,31 @@
                     </div>
                 </div>
             `).join('');
-            highlight(0);
+            setActive(activeIdx);
         }
 
-        function highlight(idx) {
-            document.querySelectorAll('.card-container').forEach((c, i) => c.classList.toggle('active', i === idx));
+        function setActive(idx) {
+            document.querySelectorAll('.card-container').forEach((c, i) => {
+                c.classList.toggle('active', i === idx);
+            });
+        }
+
+        function startCycle() {
+            if(cycleTimer) clearInterval(cycleTimer);
+            cycleTimer = setInterval(cycle, 8000);
         }
 
         function cycle() {
             if (activeIdx < 3) {
                 activeIdx++;
-                highlight(activeIdx);
+                setActive(activeIdx);
             } else {
                 showSpecials();
             }
         }
 
         function showSpecials() {
+            clearInterval(cycleTimer); // Pausamos el ciclo para mostrar especiales
             const overlay = document.getElementById('special-overlay');
             const grid = document.getElementById('menu-grid');
             
@@ -201,11 +244,11 @@
             overlay.innerHTML = `
                 <div class="special-container">
                     <div class="collage-side">
-                        ${imgs.map(url => `<div class="collage-diamond"><img src="${url}"></div>`).join('')}
+                        ${imgs.map((url, i) => `<div class="collage-diamond" style="animation-delay: ${i * 0.2}s"><img src="${url}"></div>`).join('')}
                     </div>
                     <div class="text-side">
-                        <div class="spec-title">Hoy</div>
-                        <div style="font-size: 5rem; font-weight: 800; line-height: 1;">ESPECIALES</div>
+                        <div class="spec-title">Nuestra Selección</div>
+                        <div style="font-size: 5rem; font-weight: 800; line-height: 1; letter-spacing: -2px;">ESPECIALES</div>
                         <ul class="spec-list">${sheetData.specials.text.map(t => `<li>${t}</li>`).join('')}</ul>
                     </div>
                 </div>
@@ -218,23 +261,21 @@
                 overlay.style.display = "none";
                 grid.style.opacity = "1";
                 activeIdx = 0;
-                highlight(0);
-                updatePhrases();
-            }, 12000);
+                setActive(0);
+                updateExtras();
+                startCycle(); // Reiniciamos el ciclo
+            }, 14000);
         }
 
-        function updatePhrases() {
+        function updateExtras() {
             if(sheetData.phrases.length) {
                 document.getElementById('phrase-marquee').innerText = sheetData.phrases[Math.floor(Math.random()*sheetData.phrases.length)];
             }
-            // Cambiar fondo aleatorio
             const allImgs = sheetData.cards.map(c => c.img);
             document.getElementById('custom-bg').style.backgroundImage = `url('${allImgs[Math.floor(Math.random()*allImgs.length)]}')`;
         }
 
-        load();
-        setInterval(cycle, 7500);
-        setInterval(load, 180000);
+        init();
     </script>
 </body>
 </html>
