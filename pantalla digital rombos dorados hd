@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tamarindo - Menú Diamond Full</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600;800&family=Playball&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #d4af37;
+            --dark: #000000;
+            --neon-green: #22c55e;
+            --bg-blur: 15px;
+        }
+
+        body {
+            margin: 0; padding: 0;
+            font-family: 'Poppins', sans-serif;
+            background: #000; color: white;
+            height: 100vh; overflow: hidden;
+            display: flex; flex-direction: column;
+        }
+
+        #custom-bg {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -2; background-size: cover; background-position: center;
+            filter: brightness(0.25) blur(var(--bg-blur));
+            transition: background-image 2s ease-in-out;
+            transform: scale(1.1);
+        }
+
+        header {
+            height: 12vh; display: flex; justify-content: space-between; align-items: center;
+            padding: 0 4%; background: rgba(0,0,0,0.95); border-bottom: 3px solid var(--gold);
+            z-index: 10;
+        }
+
+        .logo-container img { max-height: 55px; }
+        #phrase-marquee { font-size: 1.5rem; font-weight: 800; color: var(--gold); text-transform: uppercase; }
+
+        main {
+            flex: 1; display: flex; justify-content: center; align-items: center;
+            gap: 40px; padding: 20px;
+        }
+
+        /* --- TARJETAS EN FORMA DE ROMBO --- */
+        .card-container {
+            position: relative; width: 280px; height: 280px;
+            display: flex; justify-content: center; align-items: center;
+            transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .diamond-card {
+            width: 100%; height: 100%;
+            background: rgba(10, 10, 10, 0.95);
+            transform: rotate(45deg);
+            border: 2px solid #333;
+            border-radius: 15px;
+            overflow: hidden;
+            position: relative;
+            display: flex; justify-content: center; align-items: center;
+        }
+
+        .card-container.active { transform: scale(1.15); z-index: 5; }
+        .card-container.active .diamond-card { border: 4px solid var(--gold); box-shadow: 0 0 50px rgba(212, 175, 55, 0.4); }
+
+        .card-inner-content {
+            transform: rotate(-45deg); /* Enderezar contenido */
+            text-align: center; width: 140%; height: 140%;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+        }
+
+        .card-img-bg {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            object-fit: cover; opacity: 0.4; transition: opacity 0.5s;
+        }
+        .card-container.active .card-img-bg { opacity: 0.7; transform: scale(1.1); }
+
+        .badge { 
+            background: var(--gold); color: #000; font-weight: 900; 
+            padding: 5px 15px; border-radius: 5px; font-size: 1rem; 
+            margin-bottom: 10px; z-index: 2; text-transform: uppercase;
+        }
+
+        .list-items { 
+            color: var(--neon-green); font-size: 1.4rem; font-weight: 800; 
+            line-height: 1.2; list-style: none; padding: 0; margin: 0; z-index: 2;
+            text-shadow: 2px 2px 4px #000;
+        }
+
+        /* --- ESPECIALES OVERLAY --- */
+        #special-overlay {
+            position: absolute; top: 12vh; left: 0; width: 100%; height: 78vh;
+            background: rgba(0,0,0,0.98); display: none; z-index: 100;
+        }
+        .special-container { display: flex; height: 100%; align-items: center; padding: 0 5%; }
+        
+        .collage-side { flex: 1.2; display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px; }
+        .collage-diamond { 
+            width: 220px; height: 220px; transform: rotate(45deg); 
+            border: 4px solid var(--gold); overflow: hidden; border-radius: 10px;
+        }
+        .collage-diamond img { width: 150%; height: 150%; object-fit: cover; transform: rotate(-45deg); }
+        
+        .text-side { flex: 1; padding-left: 50px; }
+        .spec-title { font-family: 'Playball', cursive; font-size: 4.5rem; color: var(--gold); margin: 0; }
+        .spec-list { list-style: none; padding: 0; font-size: 2.8rem; color: var(--neon-green); font-weight: 800; }
+        .spec-list li { margin-bottom: 20px; border-left: 12px solid var(--gold); padding-left: 20px; text-transform: uppercase; }
+
+        footer { height: 10vh; background: var(--gold); color: #000; display: flex; justify-content: space-around; align-items: center; font-weight: 900; font-size: 2.2rem; }
+    </style>
+</head>
+<body>
+
+    <div id="custom-bg"></div>
+
+    <header>
+        <div class="logo-container"><img src="https://i.imgur.com/Sj9oMDM.gif" alt="Logo"></div>
+        <div id="phrase-marquee">Bienvenidos a Tamarindo</div>
+        <div style="transform: scale(0.7);">
+            <script src="https://cdn.logwork.com/widget/digital.js"></script>
+            <a href="https://logwork.com/current-time-in-bogota-colombia" class="digital-clock" data-style="style2" data-size="250" data-timezone="America/Bogota" data-language="en">Time</a>
+        </div>
+    </header>
+
+    <div id="special-overlay"></div>
+    <main id="menu-grid"></main>
+
+    <footer>
+        <div>MESA: $15.000</div>
+        <div>DOMICILIO: $16.000</div>
+        <div style="font-size: 1.3rem;">📍 Cra 11 # 64 - 10 | Parque Lourdes</div>
+    </footer>
+
+    <script>
+        const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vS29H3hxA9X8VcqQqGZlT4duXOIT3xAdIhExEIut9frN0i78naYSj6gnWFkWliWwKNLT5tGNlaYh16j/pub?output=csv";
+        let activeIdx = 0;
+        let sheetData = { cards: [], specials: { text: [], imgs: [] }, phrases: [] };
+
+        async function load() {
+            try {
+                const res = await fetch(`${SHEET_URL}&v=${Date.now()}`);
+                const csv = await res.text();
+                const rows = csv.split('\n').map(r => r.split(',').map(c => c.trim()));
+                
+                const hoy = ["DOMINGO", "LUNES", "MARTES", "MIERCOLES", "JUEVES", "VIERNES", "SABADO"][new Date().getDay()];
+                const dayRow = rows.find(r => r[0].toUpperCase() === hoy) || rows[1];
+                const imgRows = rows.filter(r => r[0].toLowerCase().includes("imagenes"));
+
+                sheetData.cards = [
+                    { t: 'Principios', c: dayRow[1], img: imgRows[0][1] },
+                    { t: 'Proteínas', c: dayRow[2], img: imgRows[0][2] },
+                    { t: 'Entradas', c: dayRow[4], img: imgRows[0][4] },
+                    { t: 'Bebidas', c: dayRow[5], img: imgRows[0][5] }
+                ];
+
+                sheetData.specials.text = dayRow[6].split('-').filter(i => i);
+                sheetData.specials.imgs = imgRows.map(r => r[6]).filter(url => url && url.startsWith('http'));
+                sheetData.phrases = rows.filter(r => r[0].includes("FRASES")).flatMap(r => r.slice(1).filter(c => c));
+
+                render();
+            } catch (e) { console.error(e); }
+        }
+
+        function render() {
+            const grid = document.getElementById('menu-grid');
+            grid.innerHTML = sheetData.cards.map((cat, i) => `
+                <div class="card-container" id="card-${i}">
+                    <div class="diamond-card">
+                        <img class="card-img-bg" src="${cat.img}">
+                        <div class="card-inner-content">
+                            <div class="badge">${cat.t}</div>
+                            <ul class="list-items">${cat.c.split('-').map(li => `<li>${li}</li>`).join('')}</ul>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            highlight(0);
+        }
+
+        function highlight(idx) {
+            document.querySelectorAll('.card-container').forEach((c, i) => c.classList.toggle('active', i === idx));
+        }
+
+        function cycle() {
+            if (activeIdx < 3) {
+                activeIdx++;
+                highlight(activeIdx);
+            } else {
+                showSpecials();
+            }
+        }
+
+        function showSpecials() {
+            const overlay = document.getElementById('special-overlay');
+            const grid = document.getElementById('menu-grid');
+            
+            const imgs = sheetData.specials.imgs.slice(0, 4);
+            while(imgs.length < 4) imgs.push(imgs[0]);
+
+            overlay.innerHTML = `
+                <div class="special-container">
+                    <div class="collage-side">
+                        ${imgs.map(url => `<div class="collage-diamond"><img src="${url}"></div>`).join('')}
+                    </div>
+                    <div class="text-side">
+                        <div class="spec-title">Hoy</div>
+                        <div style="font-size: 5rem; font-weight: 800; line-height: 1;">ESPECIALES</div>
+                        <ul class="spec-list">${sheetData.specials.text.map(t => `<li>${t}</li>`).join('')}</ul>
+                    </div>
+                </div>
+            `;
+
+            grid.style.opacity = "0";
+            overlay.style.display = "block";
+
+            setTimeout(() => {
+                overlay.style.display = "none";
+                grid.style.opacity = "1";
+                activeIdx = 0;
+                highlight(0);
+                updatePhrases();
+            }, 12000);
+        }
+
+        function updatePhrases() {
+            if(sheetData.phrases.length) {
+                document.getElementById('phrase-marquee').innerText = sheetData.phrases[Math.floor(Math.random()*sheetData.phrases.length)];
+            }
+            // Cambiar fondo aleatorio
+            const allImgs = sheetData.cards.map(c => c.img);
+            document.getElementById('custom-bg').style.backgroundImage = `url('${allImgs[Math.floor(Math.random()*allImgs.length)]}')`;
+        }
+
+        load();
+        setInterval(cycle, 7500);
+        setInterval(load, 180000);
+    </script>
+</body>
+</html>
